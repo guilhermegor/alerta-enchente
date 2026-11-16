@@ -193,6 +193,12 @@ export default [
   },
 
   {
+    files: ['**/*.cjs'],
+    languageOptions: { sourceType: 'commonjs', globals: { ...globals.node } },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
+
+  {
     files: ['src/**/*-worker.js'],
     languageOptions: {
       globals: {

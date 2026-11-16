@@ -66,7 +66,7 @@ npm install
 ### Usage
 
 ```bash
-npm run dev    # webpack-dev-server with HMR at http://localhost:3000
+npm start    # webpack-dev-server with HMR at http://localhost:3000
 npm run build  # production build, emits to dist/
 ```
 
