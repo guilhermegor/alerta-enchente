@@ -12,7 +12,7 @@ Grave a tela em 1920×1080 com o site aberto pelo GitHub Pages, mais a voz (ou r
 | 1:50–2:15 | **Alertas** → enviar vazio, depois preencher | "Para receber avisos, a pessoa se cadastra. O formulário valida tudo de uma vez e mostra cada erro ao lado do campo. Ao digitar o CEP, a cidade se preenche sozinha."                                                                                                |
 | 2:15–2:35 | Botões **A+** e **alto contraste**           | "Acessibilidade: fonte maior, alto contraste, navegação por teclado e leitor de tela. Quem mais precisa do alerta nem sempre enxerga bem ou usa mouse."                                                                                                              |
 | 2:35–2:50 | **Impacto**                                  | "O projeto atende os ODS 11.5, reduzir mortes e perdas em desastres, e 13.1, adaptação ao clima. Todos os dados vêm de APIs públicas e gratuitas."                                                                                                                   |
-| 2:50–3:00 | **Equipe**                                   | "Alerta Enchente, do Grupo [N]. Obrigado."                                                                                                                                                                                                                           |
+| 2:50–3:00 | **Equipe**                                   | "Alerta Enchente, do Grupo 42. Obrigado."                                                                                                                                                                                                                           |
 
 ## Checklist de gravação
 

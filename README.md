@@ -217,7 +217,7 @@ This project is licensed under MIT; see [LICENSE](LICENSE).
 
 - guilhermegor — [GitHub](https://github.com/guilhermegor) | [LinkedIn](https://www.linkedin.com/in/guilhermegor)
 
-### Equipe e pitch
+### Equipe e pitch — Grupo 42
 
 | Nome                               | RM   |
 | ---------------------------------- | ---- |
