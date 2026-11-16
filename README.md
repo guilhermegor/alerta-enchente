@@ -219,13 +219,13 @@ This project is licensed under MIT; see [LICENSE](LICENSE).
 
 ### Equipe e pitch — Grupo 42
 
-| Nome                               | RM            |
-| ---------------------------------- | ------------- |
-| August Aguiar Gruber               | _a confirmar_ |
-| Rogerio Gajewski Piatek dos Santos | _a confirmar_ |
-| Vladimir Leal Sposito de Oliveira  | _a confirmar_ |
-| Guilherme Oliveira Rodrigues       | RM569016      |
-| Nicole Rodrigues da Silva Oliveira | _a confirmar_ |
+| Nome                               | RM       |
+| ---------------------------------- | -------- |
+| August Aguiar Gruber               | RM568809 |
+| Rogerio Gajewski Piatek dos Santos | RM573884 |
+| Vladimir Leal Sposito de Oliveira  | RM569159 |
+| Guilherme Oliveira Rodrigues       | RM569016 |
+| Nicole Rodrigues da Silva Oliveira | RM572820 |
 
 Os mesmos dados aparecem na página Equipe (`src/shared/pages/team.json`).
 
