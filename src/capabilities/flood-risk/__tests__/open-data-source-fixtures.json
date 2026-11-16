@@ -130,6 +130,34 @@
         "admin1": "Piauí"
       }
     ],
-    "unavailableStatus": 503
+    "unavailableStatus": 503,
+    "nominatimHits": [
+      {
+        "lat": "-9.07",
+        "lon": "-44.36",
+        "class": "boundary",
+        "address": {
+          "state": "Piauí"
+        }
+      },
+      {
+        "lat": "-28.67",
+        "lon": "-50.43",
+        "class": "boundary",
+        "address": {
+          "state": "Rio Grande do Sul"
+        }
+      }
+    ],
+    "nominatimOtherStateHits": [
+      {
+        "lat": "-9.07",
+        "lon": "-44.36",
+        "class": "boundary",
+        "address": {
+          "state": "Piauí"
+        }
+      }
+    ]
   }
 }

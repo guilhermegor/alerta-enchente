@@ -28,6 +28,7 @@ interface NominatimHit {
   lat: string;
   lon: string;
   class: string;
+  address?: { state?: string };
 }
 
 interface OpenMeteoPlace {
@@ -53,7 +54,9 @@ export class OpenDataSource implements FloodDataSource {
 
   async locate(address: Address): Promise<Location> {
     for (const query of streetQueries(address)) {
-      const hit = (await searchNominatim(query)).find((found) => STREET_CLASSES.has(found.class));
+      const hit = (await searchNominatim(query, address.state)).find((found) =>
+        STREET_CLASSES.has(found.class),
+      );
       if (hit) return { ...toCoordinates(hit), approximate: false };
     }
     return { ...(await this.locateCity(address)), approximate: true };
@@ -92,18 +95,20 @@ export class OpenDataSource implements FloodDataSource {
   }
 }
 
-async function searchNominatim(query: string): Promise<NominatimHit[]> {
+async function searchNominatim(query: string, state: string): Promise<NominatimHit[]> {
   const params = new URLSearchParams({
     q: query,
     format: 'json',
     limit: SEARCH_LIMIT,
     countrycodes: 'br',
+    addressdetails: '1',
   });
-  return fetchJson<NominatimHit[]>(`${NOMINATIM_URL}?${params}`).catch(() => []);
+  const hits = await fetchJson<NominatimHit[]>(`${NOMINATIM_URL}?${params}`).catch(() => []);
+  return hits.filter((hit) => hit.address?.state === STATE_NAMES[state]);
 }
 
 async function nominatimCity(address: Address): Promise<Coordinates | null> {
-  const [hit] = await searchNominatim(`${address.city}, ${address.state}, Brasil`);
+  const [hit] = await searchNominatim(`${address.city}, ${address.state}, Brasil`, address.state);
   return hit ? toCoordinates(hit) : null;
 }
 
