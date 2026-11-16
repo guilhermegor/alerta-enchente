@@ -18,13 +18,24 @@
 
 - **Site:** https://guilhermegor.github.io/alerta-enchente/
 - **Pitch (até 3 min):** _link do vídeo aqui_
-- **Abrir sem instalar nada:** baixe a entrega e dê dois cliques em `index.html` (veja [Entrega em JavaScript puro](#plain-javascript-delivery-copy)).
+- **Abrir sem instalar nada:** baixe a entrega e dê dois cliques em `index.html` (veja [Entrega em JavaScript puro](#entrega-em-javascript-puro)).
 
 O problema: 8,27 milhões de brasileiros vivem em áreas de risco de enchente e deslizamento (IBGE, 2018), e o alerta costuma chegar por cidade, não pela rua. A proposta conversa com os ODS 11 (meta 11.5) e 13 (meta 13.1).
 
-## Key Features
+### Uso de IA generativa
+
+Usamos um assistente de IA (Claude) para:
+
+- gerar o projeto a partir do modelo BlueprintX `react-spa-webpack`;
+- escrever o código das camadas, os testes e esta documentação.
+
+A equipe definiu o problema, escolheu a regra "o pior fator manda" e os limites do INMET, revisou cada mudança e testou o site no navegador. Os 12 bairros de `hotspots.json` são ilustrativos e estão marcados como tal na página Impacto.
+
+<!-- slug: features -->
+## Features
 
 ### Pages & Routes
+
 - **Início** (`#/`): para quem é, o problema com dado e fonte, e como funciona.
 - **Consulta** (`#/consulta`): risco por CEP, com o porquê, e um simulador de cenários que funciona offline.
 - **Impacto** (`#/impacto`): ODS 11.5 e 13.1 e a tabela dos 12 bairros com histórico de alagamento.
@@ -32,18 +43,22 @@ O problema: 8,27 milhões de brasileiros vivem em áreas de risco de enchente e 
 - **Equipe** (`#/equipe`): integrantes e RMs.
 
 ### Capabilities (vertical slices)
+
 - `flood-risk`: CEP → ViaCEP → Nominatim → Open-Meteo (chuva e relevo) → `riskScore()`, em que **o pior fator manda**. As regras e os limites do INMET estão em [docs/como-funciona.md](docs/como-funciona.md).
 - `alert-signup`: validação pura (`validateSignup()`) e cadastro guardado no navegador (`localStorage`).
 
 ### State Management
+
 - Variant: **React Context** — see `src/capabilities/<feature>/context.tsx`
 
 ### UI & Accessibility
+
 - HTML semântico (`header`, `nav`, `main`, `section`, `footer`), link "pular para o conteúdo", `label` em todos os campos, foco visível e navegação completa por teclado.
 - **Diferencial:** botões de alto contraste e de tamanho de fonte (A-/A+), lembrados entre visitas.
 - Layout responsivo com grid, flexbox e media queries, sem rolagem horizontal a partir de 320 px.
 
 ### Testing
+
 - Unit / component: **Jest + React Testing Library**
 - End-to-end: **Playwright** (chromium)
 
@@ -54,6 +69,7 @@ O problema: 8,27 milhões de brasileiros vivem em áreas de risco de enchente e 
 ### Install
 
 #### Prerequisites
+
 - Node ≥ 22 — the exact version is pinned in `.nvmrc` (`nvm use` / `fnm use`)
 - npm (bundled with Node) — pnpm / yarn also work
 - A modern browser for development (Chrome, Firefox, Safari)
@@ -146,7 +162,9 @@ npm run lint        # eslint --fix
 ```
 
 <!-- slug: deployment -->
-## Deployment — GitHub Pages
+## Deployment
+
+### GitHub Pages
 
 The scaffold ships `.github/workflows/deploy-spa.yml`, which builds the SPA
 with `PUBLIC_PATH=/<repo-name>/`, adds a `404.html` fallback for client-side
@@ -164,7 +182,7 @@ gh api -X POST repos/guilhermegor/alerta-enchente/pages \
 
 O site publicado fica em https://guilhermegor.github.io/alerta-enchente/. Como as rotas usam `#`, o `404.html` não é necessário, mas não atrapalha.
 
-## Plain-JavaScript delivery copy (optional)
+### Entrega em JavaScript puro
 
 A entrega da FIAP não pode ter TypeScript e precisa abrir com dois cliques no `index.html`. `npm run delivery` gera as duas coisas:
 
@@ -183,24 +201,6 @@ npm run delivery
 cd js-copy && zip -r ../entrega-alerta-enchente.zip dist src public webpack.config.js && cd ..
 ```
 
-## Equipe e pitch
-
-| Nome | RM |
-|---|---|
-| _Integrante 1_ | _RM_ |
-| _Integrante 2_ | _RM_ |
-| _Integrante 3_ | _RM_ |
-
-Os mesmos dados aparecem na página Equipe (`src/shared/pages/team.json`).
-
-## Uso de IA generativa
-
-Usamos um assistente de IA (Claude) para:
-- gerar o projeto a partir do modelo BlueprintX `react-spa-webpack`;
-- escrever o código das camadas, os testes e esta documentação.
-
-A equipe definiu o problema, escolheu a regra "o pior fator manda" e os limites do INMET, revisou cada mudança e testou o site no navegador. Os 12 bairros de `hotspots.json` são ilustrativos e estão marcados como tal na página Impacto.
-
 <!-- slug: contributing -->
 ## Contributing
 
@@ -217,12 +217,24 @@ This project is licensed under MIT; see [LICENSE](LICENSE).
 
 - guilhermegor — [GitHub](https://github.com/guilhermegor) | [LinkedIn](https://www.linkedin.com/in/guilhermegor)
 
-## Acknowledgments
+### Equipe e pitch
 
-- Scaffolded with [BlueprintX](https://github.com/guilhermegor/blueprintx)'s `react-spa-webpack` skeleton.
+| Nome                               | RM   |
+| ---------------------------------- | ---- |
+| August Aguiar Gruber               | _RM_ |
+| Rogerio Gajewski Piatek dos Santos | _RM_ |
+| Vladimir Leal Sposito de Oliveira  | _RM_ |
+| Guilherme Oliveira Rodrigues       | _RM_ |
+| Nicole Rodrigues da Silva Oliveira | _RM_ |
+
+Os mesmos dados aparecem na página Equipe (`src/shared/pages/team.json`).
 
 <!-- slug: useful-links -->
 ## Useful Links
 
 - [GitHub Repository](https://github.com/guilhermegor/alerta-enchente)
 - [Issue Tracker](https://github.com/guilhermegor/alerta-enchente/issues)
+
+---
+
+<sub>Generated from the react-spa-webpack template via [BlueprintX](https://github.com/guilhermegor/blueprintx).</sub>
