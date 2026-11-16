@@ -20,26 +20,26 @@ rest of the capability. The UI's job is to:
 That's it. No business rules, no fetch calls, no localStorage —
 those belong in `application/` and `infrastructure/`.
 
-| Lives here | Does not live here |
-|---|---|
-| Components (`MainForm.tsx`, `CountDown.tsx`) | Reducers, action types |
-| Pages (`HomePage.tsx`, `HistoryPage.tsx`) | Worker / fetch / localStorage adapters |
-| CSS Modules (`*.module.css`) | State shapes, factories |
-| Local view-only `useState` (form input, modal open) | Cross-component shared state (use context) |
-| Calls to use-case hooks from `application/` | Direct calls to `infrastructure/` from a component |
+| Lives here                                          | Does not live here                                 |
+| --------------------------------------------------- | -------------------------------------------------- |
+| Components (`MainForm.tsx`, `CountDown.tsx`)        | Reducers, action types                             |
+| Pages (`HomePage.tsx`, `HistoryPage.tsx`)           | Worker / fetch / localStorage adapters             |
+| CSS Modules (`*.module.css`)                        | State shapes, factories                            |
+| Local view-only `useState` (form input, modal open) | Cross-component shared state (use context)         |
+| Calls to use-case hooks from `application/`         | Direct calls to `infrastructure/` from a component |
 
 ## Imports — the hard rule
 
 UI files **can** import from:
 
-| From | To | Why |
-|---|---|---|
-| `ui/*` | `../domain/entities`, `../domain/enums`, `../domain/dto` | Render and accept typed data |
-| `ui/*` | `../application/use-cases`, `../application/task-utils` | Trigger intents, format data |
-| `ui/*` | The capability composition root (e.g. `../context.tsx`, `../TaskContextProvider.tsx`) | Read state, dispatch |
-| `ui/*` | `@/shared/components/*`, `@/shared/templates/*` | Reuse generic UI primitives |
-| `ui/*` | Other `ui/*` files in the same capability | Capability-internal composition |
-| `ui/*` | Third-party UI libs (`lucide-react`, etc.) | Icon and primitive imports |
+| From   | To                                                                                    | Why                             |
+| ------ | ------------------------------------------------------------------------------------- | ------------------------------- |
+| `ui/*` | `../domain/entities`, `../domain/enums`, `../domain/dto`                              | Render and accept typed data    |
+| `ui/*` | `../application/use-cases`, `../application/task-utils`                               | Trigger intents, format data    |
+| `ui/*` | The capability composition root (e.g. `../context.tsx`, `../TaskContextProvider.tsx`) | Read state, dispatch            |
+| `ui/*` | `@/shared/components/*`, `@/shared/templates/*`                                       | Reuse generic UI primitives     |
+| `ui/*` | Other `ui/*` files in the same capability                                             | Capability-internal composition |
+| `ui/*` | Third-party UI libs (`lucide-react`, etc.)                                            | Icon and primitive imports      |
 
 UI files **must not** import from:
 
@@ -63,10 +63,10 @@ a use-case hook so the UI never names an action type.
 
 ### Two flavors of component
 
-| Flavor | Where it lives | What it does |
-|---|---|---|
-| **Capability component** | `ui/components/<Name>.tsx` | Knows about this capability's state shape; uses `useTaskContext()` |
-| **Page** | `ui/pages/<Name>.tsx` | Wraps capability components in a layout template, sets `document.title` |
+| Flavor                   | Where it lives             | What it does                                                            |
+| ------------------------ | -------------------------- | ----------------------------------------------------------------------- |
+| **Capability component** | `ui/components/<Name>.tsx` | Knows about this capability's state shape; uses `useTaskContext()`      |
+| **Page**                 | `ui/pages/<Name>.tsx`      | Wraps capability components in a layout template, sets `document.title` |
 
 Generic components (Button, Input, Dialog, Container) live in
 `@/shared/components/` — they accept props and have no awareness of
@@ -74,11 +74,11 @@ any capability's state.
 
 ### Local view-state vs context state
 
-| Concern | Primitive |
-|---|---|
-| Form input value before submit, focus state, modal open/closed | Local `useState` in the component |
-| Anything other components also need to read | Context (`useTaskContext`) → set via use-case hook |
-| Anything that should survive a page navigation | Context (or `application/` slice) |
+| Concern                                                        | Primitive                                          |
+| -------------------------------------------------------------- | -------------------------------------------------- |
+| Form input value before submit, focus state, modal open/closed | Local `useState` in the component                  |
+| Anything other components also need to read                    | Context (`useTaskContext`) → set via use-case hook |
+| Anything that should survive a page navigation                 | Context (or `application/` slice)                  |
 
 If two sibling components both need the same `useState`, lift it to
 context and add a use-case hook for the transition. Don't pass setters
@@ -140,12 +140,12 @@ and the factory live in `application/use-cases.ts` and
 
 ## CSS Modules conventions
 
-| Convention | Why |
-|---|---|
-| One `.module.css` per component, co-located (`MainForm.module.css`) | Scoped styles, no global leakage, easy to find |
-| Class names in `camelCase` (`.formRow`, `.thSort`) | Translates cleanly to `styles.formRow` in JSX |
-| Use design tokens from `@/shared/styles/foundations/` (`var(--primary)`) | Theme switching is one CSS variable swap |
-| Composition with template literals: `` `${styles.button} ${styles[color]}` `` | Variant styling without runtime CSS-in-JS |
+| Convention                                                                    | Why                                            |
+| ----------------------------------------------------------------------------- | ---------------------------------------------- |
+| One `.module.css` per component, co-located (`MainForm.module.css`)           | Scoped styles, no global leakage, easy to find |
+| Class names in `camelCase` (`.formRow`, `.thSort`)                            | Translates cleanly to `styles.formRow` in JSX  |
+| Use design tokens from `@/shared/styles/foundations/` (`var(--primary)`)      | Theme switching is one CSS variable swap       |
+| Composition with template literals: `` `${styles.button} ${styles[color]}` `` | Variant styling without runtime CSS-in-JS      |
 
 Avoid inline `style={{}}` props except for runtime-computed values
 (percentages from state, computed colors). Even then, prefer a CSS
@@ -163,7 +163,7 @@ fixed width**.
 1. **Fluid math** — `clamp(min, preferred, max)`, `min(a, b)`, `max(a, b)`.
    Continuous interpolation across viewports, **zero breakpoints**.
 2. **Flexbox / Grid auto-fit** — `flex-wrap: wrap`, `grid-template-columns:
-   repeat(auto-fit, minmax(20rem, 1fr))`. The browser handles reflow.
+repeat(auto-fit, minmax(20rem, 1fr))`. The browser handles reflow.
 3. **`overflow-x: auto` on data-dense containers** — tables, code blocks,
    timelines. Don't try to fit a 64rem table into a 320px screen; let
    the user scroll horizontally inside a bounded box.
@@ -174,34 +174,49 @@ fixed width**.
 
 ```css
 /* ✅ Fluid: never overflows, no breakpoint */
-.button { min-width: min(24rem, 100%); }
+.button {
+  min-width: min(24rem, 100%);
+}
 
 /* ✅ Fluid edge spacing: ~14px on phones, 32px on desktop */
-.content { margin: clamp(1.6rem, 5vw, 3.2rem); }
+.content {
+  margin: clamp(1.6rem, 5vw, 3.2rem);
+}
 
 /* ✅ Fluid type, scales with viewport but bounded */
-.heading { font-size: clamp(2rem, 5vw, 4rem); }
+.heading {
+  font-size: clamp(2rem, 5vw, 4rem);
+}
 
 /* ✅ Data table that doesn't reflow — controlled horizontal scroll */
-.tableWrapper { overflow-x: auto; }
-.tableWrapper table { min-width: 64rem; }
+.tableWrapper {
+  overflow-x: auto;
+}
+.tableWrapper table {
+  min-width: 64rem;
+}
 ```
 
 ### Content-based breakpoints, not device-based
 
 When a media query is genuinely needed, **add it at the width where
-*your content* visually breaks**, not at "iPhone width." Pick the value
+_your content_ visually breaks**, not at "iPhone width." Pick the value
 empirically by shrinking the browser and watching when the layout
 fails. Mobile-first (`min-width`) is the recommended convention.
 
 ```css
 /* ✅ Mobile-first: base styles target the smallest viewport;
        media queries widen the layout as space allows. */
-.layout { display: flex; flex-direction: column; }
+.layout {
+  display: flex;
+  flex-direction: column;
+}
 
 @media (min-width: 48rem) {
   /* Tablet+: side-by-side */
-  .layout { flex-direction: row; }
+  .layout {
+    flex-direction: row;
+  }
 }
 ```
 
@@ -210,15 +225,21 @@ fails. Mobile-first (`min-width`) is the recommended convention.
 **This is the responsive footgun that costs an hour the first time**:
 
 ```css
-:root { --bp-md: 48rem; }
+:root {
+  --bp-md: 48rem;
+}
 
 /* ❌ Silently does nothing — CSS custom properties cannot be used
        in media query conditions. The media query is parsed before
        custom properties resolve. */
-@media (min-width: var(--bp-md)) { /* ... */ }
+@media (min-width: var(--bp-md)) {
+  /* ... */
+}
 
 /* ✅ Use a literal value */
-@media (min-width: 48rem) { /* ... */ }
+@media (min-width: 48rem) {
+  /* ... */
+}
 ```
 
 Workarounds (`@custom-media` via PostCSS, Sass variables) exist but
@@ -233,10 +254,10 @@ Open DevTools device-mode and check the narrowest viewport you support
 38 devices in between — they all fit between those bounds. The two
 manual breakpoints to add to muscle memory:
 
-| Viewport | Why |
-| --- | --- |
-| ~280px (Galaxy Fold outer) | Narrowest realistic phone; catches "min-width too large" bugs |
-| ~1920px (wide desktop) | Catches "max-width too small / content awkwardly stretched" bugs |
+| Viewport                   | Why                                                              |
+| -------------------------- | ---------------------------------------------------------------- |
+| ~280px (Galaxy Fold outer) | Narrowest realistic phone; catches "min-width too large" bugs    |
+| ~1920px (wide desktop)     | Catches "max-width too small / content awkwardly stretched" bugs |
 
 If both extremes look reasonable, the in-between sizes will too. Test
 at your own content's breakpoints separately if you have any.
@@ -263,15 +284,15 @@ heavy lifting belongs in a child component or a use-case hook.
 
 ## Do / Don't
 
-| Do | Don't |
-|---|---|
-| Read state via the capability's context hook (`useTaskContext`) | Pass `state` through 4 levels of props |
-| Call use-case hooks for user intents | Dispatch action types from deep components |
-| Local `useState` / `useRef` for view-only state | Promote every state slice to context |
-| Import from `application/use-cases`, `domain/`, `@/shared/components` | Import from `infrastructure/*` |
-| One component per file (`MainForm.tsx`) | Multiple top-level components in one file |
-| CSS Modules with co-located `*.module.css` | Global stylesheets for component-specific rules |
-| Pages stay boring — wrap, title, compose | Pages do data fetching, state shaping, or formatting |
+| Do                                                                    | Don't                                                |
+| --------------------------------------------------------------------- | ---------------------------------------------------- |
+| Read state via the capability's context hook (`useTaskContext`)       | Pass `state` through 4 levels of props               |
+| Call use-case hooks for user intents                                  | Dispatch action types from deep components           |
+| Local `useState` / `useRef` for view-only state                       | Promote every state slice to context                 |
+| Import from `application/use-cases`, `domain/`, `@/shared/components` | Import from `infrastructure/*`                       |
+| One component per file (`MainForm.tsx`)                               | Multiple top-level components in one file            |
+| CSS Modules with co-located `*.module.css`                            | Global stylesheets for component-specific rules      |
+| Pages stay boring — wrap, title, compose                              | Pages do data fetching, state shaping, or formatting |
 
 ## Testing notes specific to this layer
 

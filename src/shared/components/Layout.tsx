@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react';
 import { NavLink, Outlet } from 'react-router';
 
 import logo from '@/shared/assets/logo.svg';
@@ -16,7 +17,7 @@ const LINKS = [
 export function Layout() {
   return (
     <>
-      <a className={styles.skipLink} href="#conteudo">
+      <a className={styles.skipLink} href="#conteudo" onClick={focusMain}>
         Pular para o conteúdo
       </a>
       <header className={styles.header}>
@@ -52,4 +53,9 @@ export function Layout() {
       </footer>
     </>
   );
+}
+
+function focusMain(event: MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault();
+  document.getElementById('conteudo')?.focus();
 }

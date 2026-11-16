@@ -6,6 +6,7 @@ export interface AlertSignupContextValue {
   subscribe: (signup: AlertSignup) => Promise<void>;
   errors: SignupErrors;
   saved: boolean;
+  failure: string | null;
   cityByCep: (cep: string) => Promise<string | null>;
 }
 

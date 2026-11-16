@@ -47,8 +47,9 @@
 }
 
 .nav a:hover,
-.active {
-  background: var(--color-border);
+.nav a.active {
+  background: var(--color-text-default);
+  color: var(--color-background);
   text-decoration: underline;
 }
 

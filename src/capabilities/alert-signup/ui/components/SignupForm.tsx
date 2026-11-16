@@ -1,4 +1,4 @@
-import { type FocusEvent, type FormEvent, useState } from 'react';
+import { type FocusEvent, type FormEvent, useRef, useState } from 'react';
 
 import type { AlertSignup, SignupField } from '../../domain/entities';
 import { useAlertSignupContext } from '../../use-context';
@@ -10,14 +10,19 @@ interface FieldProps {
   type?: string;
   autoComplete?: string;
   onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+  required?: boolean;
 }
 
 export function SignupForm() {
-  const { subscribe, saved, cityByCep } = useAlertSignupContext();
+  const { subscribe, saved, failure, cityByCep } = useAlertSignupContext();
   const [city, setCity] = useState('');
+  const latestCepRef = useRef('');
 
   async function fillCity(event: FocusEvent<HTMLInputElement>) {
-    setCity((await cityByCep(event.target.value)) ?? city);
+    const cep = event.target.value;
+    latestCepRef.current = cep;
+    const found = await cityByCep(cep);
+    if (found && latestCepRef.current === cep) setCity(found);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -32,13 +37,14 @@ export function SignupForm() {
       noValidate
       aria-label="Cadastro de alertas"
     >
-      <Field field="name" label="Nome completo" autoComplete="name" />
-      <Field field="email" label="E-mail" type="email" autoComplete="email" />
+      <Field field="name" label="Nome completo" autoComplete="name" required />
+      <Field field="email" label="E-mail" type="email" autoComplete="email" required />
       <Field field="phone" label="Celular com DDD (opcional)" type="tel" autoComplete="tel" />
       <Field
         field="cep"
         label="CEP"
         autoComplete="postal-code"
+        required
         onBlur={(event) => void fillCity(event)}
       />
       <CityField value={city} onChange={setCity} />
@@ -47,11 +53,14 @@ export function SignupForm() {
       <p className={styles.success} role="status">
         {saved ? 'Pronto! Você receberá alertas para esse CEP quando o risco subir.' : ''}
       </p>
+      <p className={styles.fieldError} role="alert">
+        {failure}
+      </p>
     </form>
   );
 }
 
-function Field({ field, label, type = 'text', autoComplete, onBlur }: FieldProps) {
+function Field({ field, label, type = 'text', autoComplete, onBlur, required }: FieldProps) {
   const { errors } = useAlertSignupContext();
   const errorId = `${field}-erro`;
   return (
@@ -63,6 +72,7 @@ function Field({ field, label, type = 'text', autoComplete, onBlur }: FieldProps
         type={type}
         autoComplete={autoComplete}
         onBlur={onBlur}
+        required={required}
         aria-invalid={Boolean(errors[field])}
         aria-describedby={errorId}
       />
@@ -83,6 +93,7 @@ function CityField({ value, onChange }: { value: string; onChange: (city: string
         name="city"
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        required
         aria-invalid={Boolean(errors.city)}
         aria-describedby="city-erro"
       />
@@ -98,7 +109,13 @@ function ConsentField() {
   return (
     <div className={styles.field}>
       <label className={styles.checkbox}>
-        <input type="checkbox" name="consent" aria-describedby="consent-erro" />
+        <input
+          type="checkbox"
+          name="consent"
+          required
+          aria-invalid={Boolean(errors.consent)}
+          aria-describedby="consent-erro"
+        />
         Aceito receber alertas de risco de enchente para este CEP.
       </label>
       <span id="consent-erro" className={styles.fieldError}>
