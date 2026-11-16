@@ -1,3 +1,4 @@
+import { rainTotals } from '../application/assess-address';
 import { OpenDataSource } from '../infrastructure/open-data-source';
 
 import fixtures from './open-data-source-fixtures.json';
@@ -21,6 +22,20 @@ describe('OpenDataSource.hourlyRainMm', () => {
     expect(url.searchParams.get('forecast_hours')).toBe(fixtures.requestedHours);
     expect(hourly).toHaveLength(fixtures.nextHours);
     expect(hourly).not.toContain(fixtures.elapsedHourMm);
+  });
+
+  it('sums the 24 h and 72 h windows from the first hour still ahead', async () => {
+    const { boundary } = fixtures;
+    respondWith(boundary.hourly);
+
+    const hourly = await new OpenDataSource().hourlyRainMm(fixtures.point);
+
+    expect(hourly[0]).toBe(boundary.firstNextHourMm);
+    expect(hourly.at(-1)).toBe(boundary.lastNextHourMm);
+    expect(rainTotals(hourly)).toEqual({
+      rain24hMm: boundary.rain24hMm,
+      rain72hMm: boundary.rain72hMm,
+    });
   });
 
   it('rejects a series with a missing hour instead of reading it as no rain', async () => {
