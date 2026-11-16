@@ -188,6 +188,11 @@ export default [
   },
 
   {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: { globals: { ...globals.node } },
+  },
+
+  {
     files: ['src/**/*-worker.js'],
     languageOptions: {
       globals: {

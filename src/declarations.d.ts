@@ -13,3 +13,8 @@ declare namespace NodeJS {
     PUBLIC_PATH?: string;
   }
 }
+
+declare module '*.svg' {
+  const url: string;
+  export default url;
+}

@@ -4,6 +4,6 @@
   --green-800: #065f46;
 
   --color-primary-light: var(--green-400);
-  --color-primary:       var(--green-600);
-  --color-primary-dark:  var(--green-800);
+  --color-primary: var(--green-600);
+  --color-primary-dark: var(--green-800);
 }
