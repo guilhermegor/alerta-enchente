@@ -1,0 +1,14 @@
+[
+  { "neighbourhood": "Jardim Pantanal", "city": "São Paulo", "state": "SP", "lat": -23.4935, "lon": -46.43, "history": "alto" },
+  { "neighbourhood": "Jardim Romano", "city": "São Paulo", "state": "SP", "lat": -23.488, "lon": -46.406, "history": "alto" },
+  { "neighbourhood": "Vila Itaim", "city": "São Paulo", "state": "SP", "lat": -23.499, "lon": -46.415, "history": "alto" },
+  { "neighbourhood": "Praça da Bandeira", "city": "São Paulo", "state": "SP", "lat": -23.549, "lon": -46.639, "history": "medio" },
+  { "neighbourhood": "Vila Prudente", "city": "São Paulo", "state": "SP", "lat": -23.583, "lon": -46.58, "history": "medio" },
+  { "neighbourhood": "Praça da Bandeira", "city": "Rio de Janeiro", "state": "RJ", "lat": -22.911, "lon": -43.213, "history": "alto" },
+  { "neighbourhood": "Jardim Maravilha", "city": "Rio de Janeiro", "state": "RJ", "lat": -22.923, "lon": -43.625, "history": "alto" },
+  { "neighbourhood": "Sarandi", "city": "Porto Alegre", "state": "RS", "lat": -29.985, "lon": -51.13, "history": "alto" },
+  { "neighbourhood": "Humaitá", "city": "Porto Alegre", "state": "RS", "lat": -29.99, "lon": -51.19, "history": "alto" },
+  { "neighbourhood": "Centro", "city": "Eldorado do Sul", "state": "RS", "lat": -30.002, "lon": -51.308, "history": "alto" },
+  { "neighbourhood": "Afogados", "city": "Recife", "state": "PE", "lat": -8.078, "lon": -34.915, "history": "medio" },
+  { "neighbourhood": "Ibura", "city": "Recife", "state": "PE", "lat": -8.12, "lon": -34.94, "history": "medio" }
+]
