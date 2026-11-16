@@ -46,3 +46,37 @@ describe('OpenDataSource.hourlyRainMm', () => {
     );
   });
 });
+
+function nominatimDownOpenMeteoReturns(places: unknown[]) {
+  global.fetch = jest.fn((url: string) =>
+    Promise.resolve(
+      url.includes('nominatim')
+        ? {
+            ok: false,
+            status: fixtures.cityFallback.unavailableStatus,
+            json: () => Promise.resolve([]),
+          }
+        : { ok: true, json: () => Promise.resolve({ results: places }) },
+    ),
+  ) as unknown as typeof fetch;
+}
+
+describe('OpenDataSource.locate city fallback', () => {
+  const { cityFallback } = fixtures;
+
+  it('uses Open-Meteo, filtered by state, when Nominatim is down', async () => {
+    nominatimDownOpenMeteoReturns(cityFallback.places);
+
+    await expect(new OpenDataSource().locate(cityFallback.address)).resolves.toEqual(
+      cityFallback.expected,
+    );
+  });
+
+  it('refuses a same-named city from another state', async () => {
+    nominatimDownOpenMeteoReturns(cityFallback.otherStatePlaces);
+
+    await expect(new OpenDataSource().locate(cityFallback.address)).rejects.toThrow(
+      'Não foi possível localizar Bom Jesus/RS.',
+    );
+  });
+});

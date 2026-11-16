@@ -102,24 +102,23 @@ Rules:
 Why: no long-lived secret to store, leak, or rotate; the upload token is short-lived and bound to
 this repo/workflow/environment. This is each registry's own recommended path.
 
-## Gate parity — every gate in BOTH pre-commit and CI
+## Gate parity — every gate runs in CI
 
-CI runs its gates as **explicit steps** in `tests.yml`, not via `pre-commit run`, so adding a
-hook to `.pre-commit-config.yaml` does **not** cover CI. Every lint/static/test gate must be
-wired into **both** files, in the same change — otherwise a `--no-verify` commit or an
-uninstalled hook slips straight past branch-protection CI (which runs the workflow, not local
-hooks). The gate set that must stay mirrored: `ruff check`, **`ruff format --check`** (distinct
-from `ruff check`), `mypy`, `check-docstrings`, **`check-typing`**, the shell/sql/yaml lints,
-unit + integration tests, and the **coverage floor**.
+Branch protection runs the workflows, not local hooks, so a gate exists only once it is a step
+in `.github/workflows/`. This repository has no `.pre-commit-config.yaml`. If one is added, its
+hook set must mirror the workflow gates below, in the same change.
 
-- **Single-source the coverage floor.** `.coveragerc` `[report] fail_under` is the one value;
-  pre-commit's `coverage-check` and the CI `Run Coverage Gate` both read it — never duplicate a
-  `--cov-fail-under=NN` literal. The CI coverage gate runs on **every** PR (the badge step is
-  main/tags-only, so without it a PR could drop below the floor uncaught).
-- **Version-floor consistency.** `requires-python`, `ruff target-version`, `mypy.ini
-  python_version`, and the CI `python-version` matrix must all agree. Pin mypy's `python_version`
-  to the **floor** (not the newest) so a too-new construct fails locally, not only on the CI
-  floor leg. Derive the matrix from `requires-python` — no leg below the floor.
+| Workflow | Gates |
+|---|---|
+| `lint.yml` | comment budget, `AGENTS.md` pairs, documented npm commands, assertion-weakening gate, ESLint, stylelint |
+| `type-check.yml` | `tsc --noEmit` |
+| `test.yml` | Jest |
+| `build.yml` | production webpack build |
+| `secret-scan.yml` | gitleaks over the repo history |
+| `review-threads.yml` | every review thread answered and resolved |
+
+- **Version floor.** `.nvmrc` is the single Node version. CI reads it through
+  `actions/setup-node`'s `node-version-file`. Never hardcode a Node version in a workflow.
 
 ## Validating CI locally with `act`
 

@@ -97,5 +97,39 @@
     "lastNextHourMm": 72,
     "rain24hMm": 300,
     "rain72hMm": 2628
+  },
+  "cityFallback": {
+    "address": {
+      "cep": "95290000",
+      "street": "",
+      "neighbourhood": "",
+      "city": "Bom Jesus",
+      "state": "RS"
+    },
+    "places": [
+      {
+        "latitude": -9.07,
+        "longitude": -44.36,
+        "admin1": "Piauí"
+      },
+      {
+        "latitude": -28.67,
+        "longitude": -50.43,
+        "admin1": "Rio Grande do Sul"
+      }
+    ],
+    "expected": {
+      "lat": -28.67,
+      "lon": -50.43,
+      "approximate": true
+    },
+    "otherStatePlaces": [
+      {
+        "latitude": -9.07,
+        "longitude": -44.36,
+        "admin1": "Piauí"
+      }
+    ],
+    "unavailableStatus": 503
   }
 }

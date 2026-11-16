@@ -1,13 +1,18 @@
 import type { Address, Coordinates, Location } from '../domain/entities';
 import type { FloodDataSource } from '../domain/ports';
 
+import states from './states.json';
+
 const VIA_CEP_URL = 'https://viacep.com.br/ws';
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
+const OPEN_METEO_GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const OPEN_METEO_FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 const OPEN_METEO_ELEVATION_URL = 'https://api.open-meteo.com/v1/elevation';
 const FORECAST_HOURS = 72;
 const STREET_CLASSES = new Set(['highway', 'building']);
 const SEARCH_LIMIT = '5';
+const CITY_CANDIDATES = '10';
+const STATE_NAMES: Record<string, string> = states;
 
 interface ViaCepResponse {
   logradouro: string;
@@ -23,6 +28,12 @@ interface NominatimHit {
   lat: string;
   lon: string;
   class: string;
+}
+
+interface OpenMeteoPlace {
+  latitude: number;
+  longitude: number;
+  admin1?: string;
 }
 
 export class OpenDataSource implements FloodDataSource {
@@ -75,9 +86,9 @@ export class OpenDataSource implements FloodDataSource {
   }
 
   private async locateCity(address: Address): Promise<Coordinates> {
-    const [hit] = await searchNominatim(`${address.city}, ${address.state}, Brasil`);
-    if (!hit) throw new Error(`Não foi possível localizar ${address.city}/${address.state}.`);
-    return toCoordinates(hit);
+    const point = (await nominatimCity(address)) ?? (await openMeteoCity(address));
+    if (!point) throw new Error(`Não foi possível localizar ${address.city}/${address.state}.`);
+    return point;
   }
 }
 
@@ -89,6 +100,25 @@ async function searchNominatim(query: string): Promise<NominatimHit[]> {
     countrycodes: 'br',
   });
   return fetchJson<NominatimHit[]>(`${NOMINATIM_URL}?${params}`).catch(() => []);
+}
+
+async function nominatimCity(address: Address): Promise<Coordinates | null> {
+  const [hit] = await searchNominatim(`${address.city}, ${address.state}, Brasil`);
+  return hit ? toCoordinates(hit) : null;
+}
+
+async function openMeteoCity(address: Address): Promise<Coordinates | null> {
+  const params = new URLSearchParams({
+    name: address.city,
+    count: CITY_CANDIDATES,
+    language: 'pt',
+    countryCode: 'BR',
+  });
+  const data = await fetchJson<{ results?: OpenMeteoPlace[] }>(
+    `${OPEN_METEO_GEOCODING_URL}?${params}`,
+  ).catch(() => ({ results: [] }));
+  const place = data.results?.find((found) => found.admin1 === STATE_NAMES[address.state]);
+  return place ? { lat: place.latitude, lon: place.longitude } : null;
 }
 
 function toCoordinates(hit: NominatimHit): Coordinates {
