@@ -1,7 +1,7 @@
 {
   "name": "alerta-enchente",
   "version": "1.0.0",
-  "description": "Infer\u00eancia de risco de enchente por endere\u00e7o para o cidad\u00e3o",
+  "description": "Inferência de risco de enchente por endereço para o cidadão",
   "main": "index.js",
   "type": "module",
   "engines": {
@@ -29,10 +29,7 @@
     "repo:rules:verify": "bash bin/enable_repo_rules.sh verify",
     "js-copy:build": "node scripts/emit-js-copy.mjs",
     "js-copy:verify": "node scripts/verify-js-copy.mjs",
-    "js-copy": "npm run js-copy:build && npm run js-copy:verify",
-    "git:diff:export": "bash bin/git_diff_export.sh",
-    "git:diff:check": "bash bin/git_diff_check.sh",
-    "git:diff:apply": "bash bin/git_diff_apply.sh"
+    "js-copy": "npm run js-copy:build && npm run js-copy:verify"
   },
   "keywords": [],
   "author": "",
