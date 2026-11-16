@@ -21,7 +21,7 @@ const { storm, rainSplit, ring, relative } = fixtures;
 function fakeSource(): FloodDataSource {
   return {
     addressByCep: () => Promise.resolve(storm.address),
-    locate: () => Promise.resolve({ lat: PANTANAL.lat, lon: PANTANAL.lon }),
+    locate: () => Promise.resolve({ lat: PANTANAL.lat, lon: PANTANAL.lon, approximate: false }),
     hourlyRainMm: () =>
       Promise.resolve(Array<number>(storm.hourlyMm.hours).fill(storm.hourlyMm.mmPerHour)),
     elevationsM: (points: readonly Coordinates[]) =>
@@ -36,6 +36,16 @@ describe('assessAddress', () => {
     expect(report.factors).toMatchObject(storm.expected);
     expect(report.factors.nearbyHotspot?.hotspot.neighbourhood).toBe(PANTANAL.neighbourhood);
     expect(report.assessment.level).toBe(RiskLevel.VeryHigh);
+  });
+
+  it('ignores terrain and history when only the city centre was found', async () => {
+    const source = {
+      ...fakeSource(),
+      locate: () => Promise.resolve({ lat: PANTANAL.lat, lon: PANTANAL.lon, approximate: true }),
+    };
+    const report = await assessAddress(storm.cep, source, HOTSPOTS);
+
+    expect(report.factors).toMatchObject({ relativeElevationM: 0, nearbyHotspot: null });
   });
 
   it('rejects a malformed CEP before calling any service', async () => {

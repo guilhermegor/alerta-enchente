@@ -1,4 +1,4 @@
-import type { Address, Coordinates } from '../domain/entities';
+import type { Address, Coordinates, Location } from '../domain/entities';
 import type { FloodDataSource } from '../domain/ports';
 
 const VIA_CEP_URL = 'https://viacep.com.br/ws';
@@ -43,11 +43,19 @@ export class OpenDataSource implements FloodDataSource {
     };
   }
 
-  /** Street-level via Nominatim; falls back to the city centre when the street is unknown. */
-  async locate(address: Address): Promise<Coordinates> {
-    const query = [address.street, address.neighbourhood, address.city, address.state, 'Brasil']
-      .filter(Boolean)
-      .join(', ');
+  /**
+   * Street-level via Nominatim, loosest query last: ViaCEP and OpenStreetMap often
+   * disagree on the neighbourhood name. Falls back to the city centre, flagged approximate.
+   */
+  async locate(address: Address): Promise<Location> {
+    for (const query of streetQueries(address)) {
+      const hit = await this.searchStreet(query);
+      if (hit) return { ...hit, approximate: false };
+    }
+    return { ...(await this.locateCity(address)), approximate: true };
+  }
+
+  private async searchStreet(query: string): Promise<Coordinates | null> {
     const params = new URLSearchParams({
       q: query,
       format: 'json',
@@ -55,8 +63,7 @@ export class OpenDataSource implements FloodDataSource {
       countrycodes: 'br',
     });
     const hits = await fetchJson<NominatimHit[]>(`${NOMINATIM_URL}?${params}`).catch(() => []);
-    if (hits[0]) return { lat: Number(hits[0].lat), lon: Number(hits[0].lon) };
-    return this.locateCity(address);
+    return hits[0] ? { lat: Number(hits[0].lat), lon: Number(hits[0].lon) } : null;
   }
 
   async hourlyRainMm(point: Coordinates): Promise<number[]> {
@@ -97,6 +104,16 @@ export class OpenDataSource implements FloodDataSource {
     if (!hit) throw new Error(`Não foi possível localizar ${address.city}/${address.state}.`);
     return { lat: hit.latitude, lon: hit.longitude };
   }
+}
+
+/** No street (a city-wide CEP) means no street query at all. */
+function streetQueries(address: Address): string[] {
+  if (!address.street) return [];
+  const join = (parts: string[]) => [...parts, 'Brasil'].filter(Boolean).join(', ');
+  return [
+    join([address.street, address.neighbourhood, address.city, address.state]),
+    join([address.street, address.city, address.state]),
+  ];
 }
 
 async function fetchJson<T>(url: string): Promise<T> {

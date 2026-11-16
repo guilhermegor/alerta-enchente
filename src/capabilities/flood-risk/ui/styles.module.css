@@ -3,6 +3,11 @@
   gap: var(--space-6);
 }
 
+/* Grid items default to min-width: auto and would grow to the input's intrinsic width. */
+.page > * {
+  min-width: 0;
+}
+
 .card,
 .result,
 .form {
@@ -22,6 +27,7 @@
 
 .row input {
   flex: 1 1 16rem;
+  min-width: 0;
 }
 
 .fieldError {
@@ -52,6 +58,11 @@
 
 .levelVeryHigh {
   background: #f87171;
+}
+
+.note {
+  padding: var(--space-3);
+  border-left: 4px solid var(--color-warning);
 }
 
 .tableWrap {

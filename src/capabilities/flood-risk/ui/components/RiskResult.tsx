@@ -27,6 +27,12 @@ function ReportCard({ report }: { report: RiskReport }) {
           .join(' · ')}
       </p>
       <LevelBadge level={assessment.level} />
+      {report.location.approximate && (
+        <p className={styles.note}>
+          Não achamos a rua no mapa, só a cidade: o nível considera apenas a chuva. Relevo e
+          histórico do bairro ficaram de fora.
+        </p>
+      )}
       <h3>Por quê</h3>
       <ul>
         {assessment.reasons.map((reason) => (

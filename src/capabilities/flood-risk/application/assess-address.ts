@@ -1,4 +1,4 @@
-import type { Coordinates, Hotspot, RainTotals, RiskReport } from '../domain/entities';
+import type { Coordinates, Hotspot, RainTotals, RiskFactors, RiskReport } from '../domain/entities';
 import type { FloodDataSource } from '../domain/ports';
 
 import { nearestHotspot, riskScore } from './risk-score';
@@ -14,9 +14,14 @@ export const RING_RADIUS_KM = 0.5;
 /** A hotspot counts when the address is this close to it. */
 export const HOTSPOT_RADIUS_KM = 2;
 
+type Surroundings = Pick<RiskFactors, 'relativeElevationM' | 'nearbyHotspot'>;
+
+/** With only the city centre, terrain and neighbourhood history would describe the wrong place. */
+const UNKNOWN_SURROUNDINGS: Surroundings = { relativeElevationM: 0, nearbyHotspot: null };
+
 /**
- * The whole pipeline: CEP → address → coordinates → rain + terrain → level.
- * Rain and terrain are fetched in parallel; both depend only on the coordinates.
+ * The whole pipeline: CEP → address → location → rain + surroundings → level.
+ * Rain and surroundings are fetched in parallel; both depend only on the location.
  */
 export async function assessAddress(
   cep: string,
@@ -24,17 +29,25 @@ export async function assessAddress(
   hotspots: readonly Hotspot[],
 ): Promise<RiskReport> {
   const address = await source.addressByCep(normalizeCep(cep));
-  const coordinates = await source.locate(address);
-  const [hourly, elevations] = await Promise.all([
-    source.hourlyRainMm(coordinates),
-    source.elevationsM([coordinates, ...ringAround(coordinates, RING_RADIUS_KM)]),
+  const location = await source.locate(address);
+  const [hourly, surroundings] = await Promise.all([
+    source.hourlyRainMm(location),
+    location.approximate ? UNKNOWN_SURROUNDINGS : readSurroundings(location, source, hotspots),
   ]);
-  const factors = {
-    ...rainTotals(hourly),
+  const factors = { ...rainTotals(hourly), ...surroundings };
+  return { address, location, factors, assessment: riskScore(factors) };
+}
+
+async function readSurroundings(
+  point: Coordinates,
+  source: FloodDataSource,
+  hotspots: readonly Hotspot[],
+): Promise<Surroundings> {
+  const elevations = await source.elevationsM([point, ...ringAround(point, RING_RADIUS_KM)]);
+  return {
     relativeElevationM: relativeElevationM(elevations),
-    nearbyHotspot: nearestHotspot(coordinates, hotspots, HOTSPOT_RADIUS_KM),
+    nearbyHotspot: nearestHotspot(point, hotspots, HOTSPOT_RADIUS_KM),
   };
-  return { address, coordinates, factors, assessment: riskScore(factors) };
 }
 
 /** Digits only; throws on anything that is not 8 digits. */

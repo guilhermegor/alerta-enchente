@@ -5,6 +5,11 @@ export interface Coordinates {
   lon: number;
 }
 
+/** `approximate` = only the city centre was found, not the street. */
+export interface Location extends Coordinates {
+  approximate: boolean;
+}
+
 export interface Hotspot extends Coordinates {
   neighbourhood: string;
   city: string;
@@ -45,7 +50,7 @@ export interface RainTotals {
 
 export interface RiskReport {
   address: Address;
-  coordinates: Coordinates;
+  location: Location;
   factors: RiskFactors;
   assessment: RiskAssessment;
 }
