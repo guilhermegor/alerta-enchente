@@ -3,7 +3,6 @@
   gap: var(--space-6);
 }
 
-/* Grid items default to min-width: auto and would grow to the input's intrinsic width. */
 .page > * {
   min-width: 0;
 }

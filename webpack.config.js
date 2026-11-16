@@ -30,7 +30,6 @@ const fileEnv = readEnvFile('.env');
 
 const RESERVED_ENV_KEYS = new Set(['NODE_ENV', 'PUBLIC_PATH']);
 
-// Relative by default: the build must open from file:// and from any Pages subpath.
 const publicPath = process.env.PUBLIC_PATH || fileEnv.PUBLIC_PATH || 'auto';
 
 const inlinedEnv = Object.fromEntries(

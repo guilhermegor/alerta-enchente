@@ -8,7 +8,6 @@ interface ViaCepCity {
   erro?: unknown;
 }
 
-/** Own ViaCEP call: the sign-up only needs the city, and evolves apart from the risk lookup. */
 export class ViaCepCityLookup implements CityLookup {
   async cityByCep(cep: string): Promise<string | null> {
     const response = await fetch(`${VIA_CEP_URL}/${cep}/json/`);

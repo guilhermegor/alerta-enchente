@@ -29,7 +29,6 @@ export function useSubscribeAlert(repository: SignupRepository) {
   return { execute, errors, saved };
 }
 
-/** Resolves the city once the CEP has 8 digits; null for an unknown or incomplete CEP. */
 export function useCityLookup(lookup: CityLookup) {
   return useCallback(
     async (cep: string): Promise<string | null> => {

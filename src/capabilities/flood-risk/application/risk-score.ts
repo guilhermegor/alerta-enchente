@@ -17,16 +17,13 @@ const LEVELS_BY_INDEX: readonly RiskLevel[] = [
 const EARTH_RADIUS_KM = 6_371;
 const DEGREES_PER_HALF_TURN = 180;
 
-// INMET daily-rain warning thresholds (mm/24h).
 const RAIN_WATCH_MM = 30;
 const RAIN_DANGER_MM = 50;
 const RAIN_GREAT_DANGER_MM = 100;
 
-// Metres below the surroundings.
 const VALLEY_SHALLOW_M = -3;
 const VALLEY_DEEP_M = -10;
 
-// The band is how many steps the value has climbed.
 const RAIN_STEPS: readonly ((mm: number) => boolean)[] = [
   (mm) => mm >= RAIN_WATCH_MM,
   (mm) => mm > RAIN_DANGER_MM,
@@ -43,10 +40,6 @@ const HISTORY_BAND: Record<FloodHistory, number> = {
   [FloodHistory.High]: 2,
 };
 
-/**
- * Combine rain, terrain and flood history into one level: the worst factor wins.
- * Conservative and easy to justify ("high because of X"); medium factors do not add up.
- */
 export function riskScore(factors: RiskFactors): RiskAssessment {
   const rain = rainBand(factors.rain24hMm);
   const terrain = terrainBand(factors.relativeElevationM);
@@ -77,17 +70,14 @@ function explainFactors(factors: RiskFactors, terrain: number): string[] {
   return reasons;
 }
 
-/** 0 (no warning) to 3 (INMET "great danger"). */
 export function rainBand(rain24hMm: number): number {
   return RAIN_STEPS.filter((step) => step(rain24hMm)).length;
 }
 
-/** 0 (level or higher than surroundings), 1 (slightly below), 2 (well below). */
 export function terrainBand(relativeElevationM: number): number {
   return VALLEY_STEPS.filter((step) => step(relativeElevationM)).length;
 }
 
-/** Closest hotspot within `radiusKm`, or null. Linear scan: fine for dozens of records. */
 export function nearestHotspot(
   point: Coordinates,
   hotspots: readonly Hotspot[],

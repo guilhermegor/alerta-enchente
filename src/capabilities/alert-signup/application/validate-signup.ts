@@ -20,7 +20,6 @@ const RULES: Record<SignupField, Rule> = {
   consent: (s) => (s.consent ? null : 'É preciso aceitar receber os alertas.'),
 };
 
-/** Every rule runs, so the form can show all problems at once. Phone is optional. */
 export function validateSignup(signup: AlertSignup): SignupValidation {
   const errors: SignupErrors = Object.fromEntries(
     Object.entries(RULES)

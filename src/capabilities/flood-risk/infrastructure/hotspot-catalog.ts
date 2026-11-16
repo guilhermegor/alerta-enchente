@@ -3,10 +3,6 @@ import { FloodHistory } from '../domain/enums';
 
 import rawHotspots from './hotspots.json';
 
-// Recurring flood points reported by CGE-SP, Alerta Rio and the RS/PE civil defence.
-// ponytail: approximate neighbourhood centres and a qualitative history level;
-// swap hotspots.json for an official occurrence series if the group gets one.
-
 const HISTORY_BY_LABEL: Record<string, FloodHistory | undefined> = {
   [FloodHistory.Medium]: FloodHistory.Medium,
   [FloodHistory.High]: FloodHistory.High,

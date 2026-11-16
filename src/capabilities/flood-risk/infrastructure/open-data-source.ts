@@ -27,7 +27,6 @@ interface OpenMeteoGeocoding {
   results?: { latitude: number; longitude: number }[];
 }
 
-/** ViaCEP + Nominatim + Open-Meteo: all public, keyless, CORS-enabled. */
 export class OpenDataSource implements FloodDataSource {
   async addressByCep(cep: string): Promise<Address> {
     const found = await fetchJson<Partial<ViaCepResponse>>(`${VIA_CEP_URL}/${cep}/json/`);
@@ -43,10 +42,6 @@ export class OpenDataSource implements FloodDataSource {
     };
   }
 
-  /**
-   * Street-level via Nominatim, loosest query last: ViaCEP and OpenStreetMap often
-   * disagree on the neighbourhood name. Falls back to the city centre, flagged approximate.
-   */
   async locate(address: Address): Promise<Location> {
     for (const query of streetQueries(address)) {
       const hit = await this.searchStreet(query);
@@ -106,7 +101,6 @@ export class OpenDataSource implements FloodDataSource {
   }
 }
 
-/** No street (a city-wide CEP) means no street query at all. */
 function streetQueries(address: Address): string[] {
   if (!address.street) return [];
   const join = (parts: string[]) => [...parts, 'Brasil'].filter(Boolean).join(', ');

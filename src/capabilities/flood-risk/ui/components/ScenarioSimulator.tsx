@@ -15,7 +15,6 @@ const NO_HOTSPOT = '';
 const SIMULATED_DISTANCE_KM = 1;
 const MULTI_DAY_FACTOR = 1.5;
 
-/** Works offline: same riskScore() as the CEP lookup, fed by sliders instead of APIs. */
 export function ScenarioSimulator() {
   const { hotspots } = useFloodRiskContext();
   const [rain, setRain] = useState(INITIAL_RAIN_MM);

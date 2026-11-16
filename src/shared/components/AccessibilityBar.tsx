@@ -6,7 +6,6 @@ const MAX_FONT_STEP = 3;
 const FONT_KEY = 'alerta-enchente:fonte';
 const CONTRAST_KEY = 'alerta-enchente:contraste';
 
-/** Font size and high contrast live on <html> data attributes; the CSS does the rest. */
 export function AccessibilityBar() {
   const [fontStep, setFontStep] = useState(() => Number(readSetting(FONT_KEY) ?? 0));
   const [highContrast, setHighContrast] = useState(() => readSetting(CONTRAST_KEY) === 'true');
@@ -45,7 +44,6 @@ export function AccessibilityBar() {
   );
 }
 
-// Storage can throw (private mode, blocked cookies); the bar must still work.
 function readSetting(key: string): string | null {
   try {
     return localStorage.getItem(key);
@@ -54,10 +52,11 @@ function readSetting(key: string): string | null {
   }
 }
 
-function writeSetting(key: string, value: string): void {
+function writeSetting(key: string, value: string): boolean {
   try {
     localStorage.setItem(key, value);
+    return true;
   } catch {
-    // preference simply is not remembered
+    return false;
   }
 }

@@ -7,8 +7,6 @@ import { HomePage } from '@/shared/pages/HomePage';
 import { NotFoundPage } from '@/shared/pages/NotFoundPage';
 import { TeamPage } from '@/shared/pages/TeamPage';
 
-// HashRouter: the delivery opens index.html straight from disk (file://),
-// where a path-based router matches nothing. It also needs no 404 trick on Pages.
 export function MainRouter() {
   return (
     <HashRouter>

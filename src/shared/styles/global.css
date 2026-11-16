@@ -18,7 +18,6 @@ body {
   color: var(--color-text-default);
 }
 
-/* Font-size control: each step adds 12.5% to the root size. */
 html[data-font-step='1'] {
   font-size: 70%;
 }
@@ -74,7 +73,6 @@ button {
   color: var(--color-text-default);
 }
 
-/* Long <select> options and default input sizes must never widen the page. */
 input:not([type='checkbox']),
 select {
   width: 100%;

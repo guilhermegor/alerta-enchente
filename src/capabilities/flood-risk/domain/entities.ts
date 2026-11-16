@@ -5,7 +5,6 @@ export interface Coordinates {
   lon: number;
 }
 
-/** `approximate` = only the city centre was found, not the street. */
 export interface Location extends Coordinates {
   approximate: boolean;
 }
@@ -25,7 +24,6 @@ export interface NearbyHotspot {
 export interface RiskFactors {
   rain24hMm: number;
   rain72hMm: number;
-  /** Address altitude minus the mean of its surroundings; negative means a valley. */
   relativeElevationM: number;
   nearbyHotspot: NearbyHotspot | null;
 }

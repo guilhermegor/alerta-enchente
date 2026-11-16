@@ -9,20 +9,13 @@ const KM_PER_DEGREE_LAT = 111.32;
 const DEGREES_PER_HALF_TURN = 180;
 const CEP_DIGITS = 8;
 
-/** How far the four "surroundings" samples sit from the address. */
 export const RING_RADIUS_KM = 0.5;
-/** A hotspot counts when the address is this close to it. */
 export const HOTSPOT_RADIUS_KM = 2;
 
 type Surroundings = Pick<RiskFactors, 'relativeElevationM' | 'nearbyHotspot'>;
 
-/** With only the city centre, terrain and neighbourhood history would describe the wrong place. */
 const UNKNOWN_SURROUNDINGS: Surroundings = { relativeElevationM: 0, nearbyHotspot: null };
 
-/**
- * The whole pipeline: CEP → address → location → rain + surroundings → level.
- * Rain and surroundings are fetched in parallel; both depend only on the location.
- */
 export async function assessAddress(
   cep: string,
   source: FloodDataSource,
@@ -50,7 +43,6 @@ async function readSurroundings(
   };
 }
 
-/** Digits only; throws on anything that is not 8 digits. */
 export function normalizeCep(raw: string): string {
   const digits = raw.replace(/\D/g, '');
   if (digits.length !== CEP_DIGITS) throw new Error('CEP deve ter 8 dígitos.');
@@ -64,7 +56,6 @@ export function rainTotals(hourlyMm: readonly number[]): RainTotals {
   };
 }
 
-/** North, east, south and west of `point`, `radiusKm` away. */
 export function ringAround(point: Coordinates, radiusKm: number): Coordinates[] {
   const dLat = radiusKm / KM_PER_DEGREE_LAT;
   const dLon =
@@ -77,7 +68,6 @@ export function ringAround(point: Coordinates, radiusKm: number): Coordinates[] 
   ];
 }
 
-/** First elevation is the address; the rest are its surroundings. Negative = valley. */
 export function relativeElevationM([center, ...ring]: readonly number[]): number {
   if (center === undefined || ring.length === 0) throw new Error('Altitudes insuficientes.');
   return center - sum(ring) / ring.length;
