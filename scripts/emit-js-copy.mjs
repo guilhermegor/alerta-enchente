@@ -22,9 +22,6 @@ function transpileFile(srcPath, destPath) {
     filename: srcPath,
     babelrc: false,
     configFile: false,
-    // Strip types only: the copy is the source a reader grades, so JSX and
-    // modern syntax stay as written. Compiling them belongs to the copy's own
-    // webpack build (and dev-mode JSX would call jsxDEV in production).
     presets: ['@babel/preset-typescript'],
     plugins: srcPath.endsWith('.tsx') ? ['@babel/plugin-syntax-jsx'] : [],
   });
