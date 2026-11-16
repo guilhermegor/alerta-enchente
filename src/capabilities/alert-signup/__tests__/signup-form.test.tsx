@@ -46,6 +46,15 @@ describe('SignupForm city autofill', () => {
     expect(screen.getByLabelText('Cidade')).toHaveValue('');
   });
 
+  it('keeps a city typed by hand while the lookup was pending', async () => {
+    const { finishLookup } = renderWithPendingLookup();
+    fireEvent.change(screen.getByLabelText('Cidade'), { target: { value: fixtures.typedCity } });
+
+    await finishLookup(fixtures.city);
+
+    expect(screen.getByLabelText('Cidade')).toHaveValue(fixtures.typedCity);
+  });
+
   it('keeps the city when the lookup finds nothing', async () => {
     const { finishLookup } = renderWithPendingLookup();
 

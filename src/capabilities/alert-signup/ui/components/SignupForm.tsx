@@ -20,8 +20,10 @@ export function SignupForm() {
   async function fillCity(event: FocusEvent<HTMLInputElement>) {
     const input = event.target;
     const cep = input.value;
+    const cityBefore = city;
     const found = await cityByCep(cep);
-    if (found && input.value === cep) setCity(found);
+    if (found && input.value === cep)
+      setCity((current) => (current === cityBefore ? found : current));
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
