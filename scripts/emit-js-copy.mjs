@@ -110,7 +110,7 @@ export default {
       // CSS ships as files under css/, never as injected <style> tags.
       {
         test: /\\.module\\.css$/,
-        use: [MiniCssExtractPlugin.loader, { loader: 'css-loader', options: { modules: { namedExport: false } } }],
+        use: [MiniCssExtractPlugin.loader, { loader: 'css-loader', options: { modules: { namedExport: false, exportLocalsConvention: 'as-is' } } }],
       },
       {
         test: /\\.css$/,
