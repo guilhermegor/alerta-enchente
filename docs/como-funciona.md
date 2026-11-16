@@ -7,9 +7,9 @@ Esta página explica as decisões de projeto que o código não mostra sozinho. 
 `assessAddress()` (`src/capabilities/flood-risk/application/assess-address.ts`) executa o pipeline:
 
 1. **CEP → endereço** pelo ViaCEP. O CEP precisa ter 8 dígitos; a máscara (`01310-100`) é removida antes.
-2. **Endereço → coordenadas** pelo Nominatim (OpenStreetMap). A busca começa com rua, bairro, cidade e UF e, se nada for encontrado, tenta só rua, cidade e UF. Isso é necessário porque o ViaCEP e o OpenStreetMap costumam dar nomes diferentes ao mesmo bairro: o CEP 08190-000 vem do ViaCEP como "Vila Aimoré", mas no mapa a rua fica em "Vila Grão Mogol".
-3. **Sem rua no mapa → centro da cidade**, pela geocodificação do Open-Meteo. A localização fica marcada como `approximate` e o resultado avisa a pessoa. Nesse caso, relevo e histórico do bairro **não entram no cálculo**, porque descreveriam outro lugar. Antes dessa regra, um CEP do Itaim Paulista era comparado com a Praça da Bandeira, no centro de São Paulo.
-4. **Chuva**: a precipitação horária das próximas 72 h (Open-Meteo), somada em 24 h e 72 h.
+2. **Endereço → coordenadas** pelo Nominatim (OpenStreetMap). A busca começa com rua, bairro, cidade e UF e, se nada for encontrado, tenta só rua, cidade e UF. Só vale um resultado que seja uma via ou um imóvel (classes `highway` e `building` do OpenStreetMap): se a rua não existe no mapa, o Nominatim costuma devolver o bairro ou a cidade, e esse ponto não pode passar por endereço. Isso é necessário porque o ViaCEP e o OpenStreetMap costumam dar nomes diferentes ao mesmo bairro: o CEP 08190-000 vem do ViaCEP como "Vila Aimoré", mas no mapa a rua fica em "Vila Grão Mogol".
+3. **Sem rua no mapa → centro da cidade**, pelo Nominatim com cidade e UF. A UF é necessária porque há municípios com o mesmo nome em estados diferentes (Bom Jesus existe no RS e no PI). A localização fica marcada como `approximate` e o resultado avisa a pessoa. Nesse caso, relevo e histórico do bairro **não entram no cálculo**, porque descreveriam outro lugar. Antes dessa regra, um CEP do Itaim Paulista era comparado com a Praça da Bandeira, no centro de São Paulo.
+4. **Chuva**: a precipitação horária das próximas 72 h a partir da hora atual (`forecast_hours=72` no Open-Meteo), somada em 24 h e 72 h. Com `forecast_days`, a série começaria à meia-noite e, à noite, as "próximas 24 h" já teriam passado. Se faltar algum valor na série, a consulta falha com aviso em vez de tratar a falta como chuva zero.
 5. **Relevo**: a altitude do endereço menos a média de quatro pontos a 500 m dele (norte, leste, sul e oeste), pela API de elevação do Open-Meteo. Um valor negativo indica que o endereço fica num vale.
 6. **Histórico**: o ponto de alagamento conhecido mais próximo num raio de 2 km.
 
@@ -19,11 +19,11 @@ A chuva e o relevo são buscados em paralelo, porque ambos dependem só das coor
 
 `riskScore()` (`application/risk-score.ts`) transforma cada fator numa faixa e usa a **maior** delas:
 
-| Fator | Faixa 0 | Faixa 1 | Faixa 2 | Faixa 3 |
-|---|---|---|---|---|
-| Chuva em 24 h (limites de aviso do INMET) | < 30 mm | ≥ 30 mm | > 50 mm | > 100 mm |
-| Relevo em relação ao entorno | acima de −3 m | ≤ −3 m | ≤ −10 m | — |
-| Histórico do bairro (até 2 km) | nenhum | médio | alto | — |
+| Fator                                     | Faixa 0       | Faixa 1 | Faixa 2 | Faixa 3  |
+| ----------------------------------------- | ------------- | ------- | ------- | -------- |
+| Chuva em 24 h (limites de aviso do INMET) | < 30 mm       | ≥ 30 mm | > 50 mm | > 100 mm |
+| Relevo em relação ao entorno              | acima de −3 m | ≤ −3 m  | ≤ −10 m | —        |
+| Histórico do bairro (até 2 km)            | nenhum        | médio   | alto    | —        |
 
 Faixa 0 = baixo, 1 = moderado, 2 = alto, 3 = muito alto. A regra é conservadora e fácil de justificar ("alto por causa de X"). Fatores médios não se somam: chuva moderada num terreno levemente baixo continua moderado.
 

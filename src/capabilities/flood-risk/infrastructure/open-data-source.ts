@@ -3,10 +3,11 @@ import type { FloodDataSource } from '../domain/ports';
 
 const VIA_CEP_URL = 'https://viacep.com.br/ws';
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
-const OPEN_METEO_GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const OPEN_METEO_FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 const OPEN_METEO_ELEVATION_URL = 'https://api.open-meteo.com/v1/elevation';
-const FORECAST_DAYS = '3';
+const FORECAST_HOURS = 72;
+const STREET_CLASSES = new Set(['highway', 'building']);
+const SEARCH_LIMIT = '5';
 
 interface ViaCepResponse {
   logradouro: string;
@@ -21,10 +22,7 @@ const VIA_CEP_DEFAULTS: ViaCepResponse = { logradouro: '', bairro: '', localidad
 interface NominatimHit {
   lat: string;
   lon: string;
-}
-
-interface OpenMeteoGeocoding {
-  results?: { latitude: number; longitude: number }[];
+  class: string;
 }
 
 export class OpenDataSource implements FloodDataSource {
@@ -44,21 +42,10 @@ export class OpenDataSource implements FloodDataSource {
 
   async locate(address: Address): Promise<Location> {
     for (const query of streetQueries(address)) {
-      const hit = await this.searchStreet(query);
-      if (hit) return { ...hit, approximate: false };
+      const hit = (await searchNominatim(query)).find((found) => STREET_CLASSES.has(found.class));
+      if (hit) return { ...toCoordinates(hit), approximate: false };
     }
     return { ...(await this.locateCity(address)), approximate: true };
-  }
-
-  private async searchStreet(query: string): Promise<Coordinates | null> {
-    const params = new URLSearchParams({
-      q: query,
-      format: 'json',
-      limit: '1',
-      countrycodes: 'br',
-    });
-    const hits = await fetchJson<NominatimHit[]>(`${NOMINATIM_URL}?${params}`).catch(() => []);
-    return hits[0] ? { lat: Number(hits[0].lat), lon: Number(hits[0].lon) } : null;
   }
 
   async hourlyRainMm(point: Coordinates): Promise<number[]> {
@@ -66,15 +53,15 @@ export class OpenDataSource implements FloodDataSource {
       latitude: String(point.lat),
       longitude: String(point.lon),
       hourly: 'precipitation',
-      forecast_days: FORECAST_DAYS,
+      forecast_hours: String(FORECAST_HOURS),
       timezone: 'America/Sao_Paulo',
     });
     const data = await fetchJson<{ hourly?: { precipitation?: (number | null)[] } }>(
       `${OPEN_METEO_FORECAST_URL}?${params}`,
     );
     const hourly = data.hourly?.precipitation;
-    if (!hourly) throw new Error('Previsão de chuva indisponível.');
-    return hourly.map((mm) => mm ?? 0);
+    if (!isCompleteSeries(hourly)) throw new Error('Previsão de chuva indisponível.');
+    return hourly;
   }
 
   async elevationsM(points: readonly Coordinates[]): Promise<number[]> {
@@ -88,17 +75,32 @@ export class OpenDataSource implements FloodDataSource {
   }
 
   private async locateCity(address: Address): Promise<Coordinates> {
-    const params = new URLSearchParams({
-      name: address.city,
-      count: '1',
-      language: 'pt',
-      countryCode: 'BR',
-    });
-    const data = await fetchJson<OpenMeteoGeocoding>(`${OPEN_METEO_GEOCODING_URL}?${params}`);
-    const hit = data.results?.[0];
+    const [hit] = await searchNominatim(`${address.city}, ${address.state}, Brasil`);
     if (!hit) throw new Error(`Não foi possível localizar ${address.city}/${address.state}.`);
-    return { lat: hit.latitude, lon: hit.longitude };
+    return toCoordinates(hit);
   }
+}
+
+async function searchNominatim(query: string): Promise<NominatimHit[]> {
+  const params = new URLSearchParams({
+    q: query,
+    format: 'json',
+    limit: SEARCH_LIMIT,
+    countrycodes: 'br',
+  });
+  return fetchJson<NominatimHit[]>(`${NOMINATIM_URL}?${params}`).catch(() => []);
+}
+
+function toCoordinates(hit: NominatimHit): Coordinates {
+  return { lat: Number(hit.lat), lon: Number(hit.lon) };
+}
+
+function isCompleteSeries(hourly: (number | null)[] | undefined): hourly is number[] {
+  return (
+    Array.isArray(hourly) &&
+    hourly.length >= FORECAST_HOURS &&
+    hourly.every((mm) => typeof mm === 'number')
+  );
 }
 
 function streetQueries(address: Address): string[] {
