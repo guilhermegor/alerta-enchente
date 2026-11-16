@@ -194,12 +194,14 @@ npm run delivery
 
 `js-copy:verify` falha se sobrar qualquer arquivo `.ts`/`.tsx` ou menção a TypeScript. O build usa `HashRouter` e caminhos relativos, por isso abre direto do disco (`file://`). As consultas às APIs públicas precisam de internet; sem ela, o simulador da página Consulta continua funcionando.
 
-Para montar o `.zip` de entrega, com este README e os documentos que ele cita:
+Para montar o `.zip` de entrega: o site fica na raiz (`index.html`, `css/`, `js/`, `img/`), ao lado deste README, dos documentos que ele cita, do código-fonte em JavaScript e do `.txt` e do `.pdf` com o grupo, os RMs e o link do pitch (esses dois ficam fora do repositório):
 
 ```bash
 npm run delivery
-cp -r README.md docs js-copy/
-cd js-copy && zip -r ../entrega-alerta-enchente.zip README.md docs dist src public webpack.config.js && cd ..
+mkdir entrega
+cp -r js-copy/dist/. README.md docs js-copy/src js-copy/public js-copy/webpack.config.js entrega/
+cp grupo-42-alerta-enchente.txt grupo-42-alerta-enchente.pdf entrega/
+cd entrega && zip -r ../entrega-alerta-enchente.zip . && cd ..
 ```
 
 <!-- slug: contributing -->
