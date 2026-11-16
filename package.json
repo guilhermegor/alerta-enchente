@@ -29,7 +29,10 @@
     "repo:rules:verify": "bash bin/enable_repo_rules.sh verify",
     "js-copy:build": "node scripts/emit-js-copy.mjs",
     "js-copy:verify": "node scripts/verify-js-copy.mjs",
-    "js-copy": "npm run js-copy:build && npm run js-copy:verify"
+    "js-copy": "npm run js-copy:build && npm run js-copy:verify",
+    "git:diff:export": "bash bin/git_diff_export.sh",
+    "git:diff:check": "bash bin/git_diff_check.sh",
+    "git:diff:apply": "bash bin/git_diff_apply.sh"
   },
   "keywords": [],
   "author": "",
