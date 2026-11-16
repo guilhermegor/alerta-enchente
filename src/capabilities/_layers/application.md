@@ -11,13 +11,13 @@ Layer import boundaries and capability flow live in the template's root
 
 Pure business logic and React-side orchestration of state transitions.
 
-| Lives here                            | Does not live here                  |
-| ------------------------------------- | ----------------------------------- |
-| State shape (`*StateModel`)           | DOM access                          |
-| Action types and discriminated unions | `fetch`, HTTP, `localStorage`       |
-| Reducers (pure transitions)           | Worker / timer / audio APIs         |
-| Use-case hooks (intent → dispatch)    | Concrete repository implementations |
-| Factories (entity construction rules) | Route definitions, JSX              |
+| Lives here | Does not live here |
+|---|---|
+| State shape (`*StateModel`) | DOM access |
+| Action types and discriminated unions | `fetch`, HTTP, `localStorage` |
+| Reducers (pure transitions) | Worker / timer / audio APIs |
+| Use-case hooks (intent → dispatch) | Concrete repository implementations |
+| Factories (entity construction rules) | Route definitions, JSX |
 
 Side effects belong in `infrastructure/` or in the side-effect boundary
 of a use-case hook — never inside a reducer.
@@ -31,13 +31,13 @@ scaffold step. Inside the **vanilla React** variant (`context.tsx` +
 at the use-case level. That choice is the most common architectural
 mistake in this layer — pick deliberately.
 
-| State shape                                             | Primitive      | Why                                          |
-| ------------------------------------------------------- | -------------- | -------------------------------------------- |
-| 1–2 independent values (open/closed flag, input text)   | `useState`     | Lighter, clearer                             |
-| Async slice (`data`, `loading`, `error`)                | 3 × `useState` | Independent transitions — see `use-cases.ts` |
-| Cohesive state where one user gesture changes 3+ fields | `useReducer`   | Centralizes transitions, keeps them atomic   |
-| Cross-component shared state, complex async / caching   | Redux Toolkit  | See `use-cases.rtk.ts`                       |
-| Cross-component shared state, simple shape              | Zustand        | See `use-cases.zustand.ts`                   |
+| State shape | Primitive | Why |
+|---|---|---|
+| 1–2 independent values (open/closed flag, input text) | `useState` | Lighter, clearer |
+| Async slice (`data`, `loading`, `error`) | 3 × `useState` | Independent transitions — see `use-cases.ts` |
+| Cohesive state where one user gesture changes 3+ fields | `useReducer` | Centralizes transitions, keeps them atomic |
+| Cross-component shared state, complex async / caching | Redux Toolkit | See `use-cases.rtk.ts` |
+| Cross-component shared state, simple shape | Zustand | See `use-cases.zustand.ts` |
 
 **Rule of thumb:** when a single user gesture changes multiple state
 fields, reach for `useReducer`. The reducer becomes the only place that
@@ -67,7 +67,7 @@ function handleStart(task) {
 ```
 
 The reducer's `case START_TASK` becomes the **single source of truth**
-for "what starting a task means". Components dispatch _intent_, not
+for "what starting a task means". Components dispatch *intent*, not
 shape changes.
 
 ## Reducer rules (when using `useReducer`)
@@ -77,12 +77,12 @@ it during reconciliation and **may invoke it twice in StrictMode** to
 catch bugs. Anything non-pure here turns into a subtle production
 defect that does not reproduce in tests.
 
-| Allowed in a reducer                             | Not allowed in a reducer              |
-| ------------------------------------------------ | ------------------------------------- |
-| Reading from `state` and `action`                | `Date.now()`, `Math.random()`         |
-| Calling pure helpers (e.g. from `task-utils.ts`) | `localStorage`, `fetch`, any I/O      |
-| Spreading and returning a new state object       | Dispatching further actions           |
-| Throwing on impossible action types              | `setTimeout`, `requestAnimationFrame` |
+| Allowed in a reducer | Not allowed in a reducer |
+|---|---|
+| Reading from `state` and `action` | `Date.now()`, `Math.random()` |
+| Calling pure helpers (e.g. from `task-utils.ts`) | `localStorage`, `fetch`, any I/O |
+| Spreading and returning a new state object | Dispatching further actions |
+| Throwing on impossible action types | `setTimeout`, `requestAnimationFrame` |
 
 **Timestamps** that look like part of a transition (e.g. when a task
 completed) belong in the **action payload**, computed by the use-case
@@ -122,7 +122,10 @@ three shapes — read these and you can write the others.
 
 ```ts
 // application/reducer.ts
-export function taskReducer(state: TaskStateModel, action: TaskActionModel): TaskStateModel {
+export function taskReducer(
+  state: TaskStateModel,
+  action: TaskActionModel,
+): TaskStateModel {
   switch (action.type) {
     // Case with const bindings → wrap in `{ ... }` to scope them.
     // Multi-field atomic transition — the headline reason for useReducer.
@@ -147,7 +150,9 @@ export function taskReducer(state: TaskStateModel, action: TaskActionModel): Tas
         ...state,
         activeTask: null,
         tasks: state.tasks.map((task) =>
-          state.activeTask?.id === task.id ? { ...task, completeDate: Date.now() } : task,
+          state.activeTask?.id === task.id
+            ? { ...task, completeDate: Date.now() }
+            : task,
         ),
       };
     }
@@ -157,7 +162,9 @@ export function taskReducer(state: TaskStateModel, action: TaskActionModel): Tas
       return {
         ...state,
         secondsRemaining: action.payload.secondsRemaining,
-        formattedSecondsRemaining: formatSecondsToMinutes(action.payload.secondsRemaining),
+        formattedSecondsRemaining: formatSecondsToMinutes(
+          action.payload.secondsRemaining,
+        ),
       };
 
     // ...remaining cases follow the same three shapes.
@@ -173,7 +180,7 @@ export function taskReducer(state: TaskStateModel, action: TaskActionModel): Tas
 
 Three things to internalize from this shape:
 
-1. **Brace discipline.** A `case` that declares `const` _must_ use
+1. **Brace discipline.** A `case` that declares `const` *must* use
    `{ ... }` to scope the binding — without it, names leak into sibling
    cases and TypeScript complains. Cases with no locals stay
    brace-free for visual lightness.
@@ -207,7 +214,8 @@ export type TaskActionsWithPayload =
   | { type: TaskActionTypes.COUNT_DOWN; payload: { secondsRemaining: number } };
 
 export type TaskActionsWithoutPayload =
-  { type: TaskActionTypes.INTERRUPT_TASK } | { type: TaskActionTypes.COMPLETE_TASK };
+  | { type: TaskActionTypes.INTERRUPT_TASK }
+  | { type: TaskActionTypes.COMPLETE_TASK };
 
 export type TaskActionModel = TaskActionsWithPayload | TaskActionsWithoutPayload;
 ```
@@ -224,7 +232,10 @@ only the callback.
 
 ```ts
 // application/use-cases.ts
-export function useStartTask(state: TaskStateModel, dispatch: React.Dispatch<TaskActionModel>) {
+export function useStartTask(
+  state: TaskStateModel,
+  dispatch: React.Dispatch<TaskActionModel>,
+) {
   return useCallback(
     (dto: CreateTaskDto) => {
       const nextCycle = getNextCycle(state.currentCycle);
@@ -238,7 +249,6 @@ export function useStartTask(state: TaskStateModel, dispatch: React.Dispatch<Tas
 ```
 
 Each hook should:
-
 - Accept only the slice of state it needs (or the repo for async cases).
 - Compute derived values, build the action payload.
 - Dispatch **once** per call.
@@ -253,27 +263,27 @@ For async use cases (RTK/Zustand or repo-backed), the hook also exposes
 Extract when entity construction has **rules** that should live in one
 place:
 
-| Construction shape                                       | Where                  |
-| -------------------------------------------------------- | ---------------------- |
-| ID generation (`crypto.randomUUID()`)                    | `factories.ts`         |
-| Default field values (`completeDate: null`)              | `factories.ts`         |
-| Derived values from DTO + context (cycle type, duration) | `factories.ts`         |
-| One-line object spread with no decisions                 | Inline in the use case |
+| Construction shape | Where |
+|---|---|
+| ID generation (`crypto.randomUUID()`) | `factories.ts` |
+| Default field values (`completeDate: null`) | `factories.ts` |
+| Derived values from DTO + context (cycle type, duration) | `factories.ts` |
+| One-line object spread with no decisions | Inline in the use case |
 
 For DTO ↔ entity mapping rules, see the parent CLAUDE.md.
 
 ## Do / Don't
 
-| Do                                                          | Don't                                            |
-| ----------------------------------------------------------- | ------------------------------------------------ |
-| Make reducers pure — read inputs, return new state          | Call `Date.now()` or `dispatch` inside a reducer |
-| Put timestamps in action payloads                           | Mutate state in place                            |
-| One use-case hook per user intent                           | Cram CRUD verbs into one giant hook              |
-| Use discriminated unions for action types                   | Use `payload: any` or `Record<string, unknown>`  |
-| Reach for `useReducer` when multi-field transitions cluster | Reach for `useReducer` for one boolean toggle    |
-| Extract to `factories.ts` when construction has rules       | Wrap every `{ ...obj }` in a factory function    |
-| Keep action type enums in `domain/`                         | Define action types in `application/`            |
-| Test reducers and factories with pure assertions            | Mount React just to test a pure transition       |
+| Do | Don't |
+|---|---|
+| Make reducers pure — read inputs, return new state | Call `Date.now()` or `dispatch` inside a reducer |
+| Put timestamps in action payloads | Mutate state in place |
+| One use-case hook per user intent | Cram CRUD verbs into one giant hook |
+| Use discriminated unions for action types | Use `payload: any` or `Record<string, unknown>` |
+| Reach for `useReducer` when multi-field transitions cluster | Reach for `useReducer` for one boolean toggle |
+| Extract to `factories.ts` when construction has rules | Wrap every `{ ...obj }` in a factory function |
+| Keep action type enums in `domain/` | Define action types in `application/` |
+| Test reducers and factories with pure assertions | Mount React just to test a pure transition |
 
 ## Where the composition root is NOT
 
@@ -294,7 +304,7 @@ What `application/` exports (consumed by the composition root):
 
 The composition root imports these AND the infrastructure adapters,
 then wires them inside a React Provider. The wiring isn't business
-logic; if you find a _rule_ sneaking into the composition root, move
+logic; if you find a *rule* sneaking into the composition root, move
 it back here. See the template's root `CLAUDE.md` for where the
 composition root file sits in the directory layout.
 

@@ -2,8 +2,7 @@ const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 
 const RE_TEST_PATH = /\.(test|spec)\.(ts|tsx|js|jsx)$/;
-const RE_TEST_START =
-  /(?<![.\w])[fx]?(?:it|test)(?:\.each\((?:[^()]|\([^()]*\))*\)|\.\w+)?\(\s*(['"`])((?:\\.|(?!\1).)*)\1/g;
+const RE_TEST_START = /(?<![.\w])[fx]?(?:it|test)(?:\.each\((?:[^()]|\([^()]*\))*\)|\.\w+)?\(\s*(['"`])((?:\\.|(?!\1).)*)\1/g;
 const RE_MATCHER = /\.(not\.)?(to[A-Z]\w*)\(/g;
 const RE_PLACEHOLDER = /^<[^>]*>$/;
 const RE_JUSTIFICATION = /^\s*test-change-ok:[ \t]*(\S.*)$/gim;
@@ -111,7 +110,7 @@ function justification(base) {
 function changedPaths(output) {
   const tokens = output.split('\0');
   const rows = [];
-  for (let index = 0; index < tokens.length - 1;) {
+  for (let index = 0; index < tokens.length - 1; ) {
     const width = /^[RC]/.test(tokens[index]) ? 2 : 1;
     rows.push({ status: tokens[index][0], paths: tokens.slice(index + 1, index + 1 + width) });
     index += width + 1;
@@ -122,8 +121,7 @@ function changedPaths(output) {
 function collect(base) {
   const output = gitStrict(['diff', '--cached', '-z', '--name-status', '--find-renames', base]);
   const rows = changedPaths(output).filter(
-    (row) =>
-      !['A', 'D', 'U'].includes(row.status) && RE_TEST_PATH.test(row.paths[row.paths.length - 1]),
+    (row) => !['A', 'D', 'U'].includes(row.status) && RE_TEST_PATH.test(row.paths[row.paths.length - 1]),
   );
   return rows.flatMap((row) => {
     const newPath = row.paths[row.paths.length - 1];
@@ -154,27 +152,21 @@ function main() {
   const ref = defaultBranch();
   const base = ref ? git(['merge-base', ref, 'HEAD', ...mergeHeads()]).trim() : '';
   if (!base) {
-    console.error(
-      'could not resolve a merge-base against the default branch - refusing to pass blind.',
-    );
+    console.error('could not resolve a merge-base against the default branch - refusing to pass blind.');
     return 1;
   }
   let findings;
   try {
     findings = collect(base);
   } catch (error) {
-    console.error(
-      `git failed while reading the staged diff - refusing to pass blind: ${error.message}`,
-    );
+    console.error(`git failed while reading the staged diff - refusing to pass blind: ${error.message}`);
     return 1;
   }
   findings.forEach((finding) => console.log(finding));
   if (findings.length === 0) return 0;
   const reason = justification(base);
   if (reason) return 0;
-  console.error(
-    `${findings.length} assertion-weakening change(s) with no 'test-change-ok: <reason>' justification.`,
-  );
+  console.error(`${findings.length} assertion-weakening change(s) with no 'test-change-ok: <reason>' justification.`);
   return 1;
 }
 
