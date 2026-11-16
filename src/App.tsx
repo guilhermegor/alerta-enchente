@@ -1,10 +1,13 @@
-import { NoteProvider } from '@/capabilities/example';
+import { AlertSignupProvider } from '@/capabilities/alert-signup';
+import { FloodRiskProvider } from '@/capabilities/flood-risk';
 import { MainRouter } from '@/routes/MainRouter';
 
 const App = () => (
-  <NoteProvider>
-    <MainRouter />
-  </NoteProvider>
+  <FloodRiskProvider>
+    <AlertSignupProvider>
+      <MainRouter />
+    </AlertSignupProvider>
+  </FloodRiskProvider>
 );
 
 export default App;

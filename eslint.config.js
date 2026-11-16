@@ -188,6 +188,17 @@ export default [
   },
 
   {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: { globals: { ...globals.node } },
+  },
+
+  {
+    files: ['**/*.cjs'],
+    languageOptions: { sourceType: 'commonjs', globals: { ...globals.node } },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
+
+  {
     files: ['src/**/*-worker.js'],
     languageOptions: {
       globals: {

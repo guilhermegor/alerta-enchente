@@ -30,7 +30,7 @@ const fileEnv = readEnvFile('.env');
 
 const RESERVED_ENV_KEYS = new Set(['NODE_ENV', 'PUBLIC_PATH']);
 
-const publicPath = process.env.PUBLIC_PATH || fileEnv.PUBLIC_PATH || '/';
+const publicPath = process.env.PUBLIC_PATH || fileEnv.PUBLIC_PATH || 'auto';
 
 const inlinedEnv = Object.fromEntries(
   Object.entries(fileEnv)
@@ -42,7 +42,7 @@ export default {
   entry: './src/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.[contenthash].js',
+    filename: 'js/bundle.[contenthash].js',
     publicPath,
     clean: true,
   },
@@ -59,6 +59,8 @@ export default {
   },
   module: {
     rules: [
+      { test: /\.(svg|png|jpe?g|webp)$/, type: 'asset/resource', generator: { filename: 'img/[name].[contenthash][ext]' } },
+      { test: /\.woff2?$/, type: 'asset/resource', generator: { filename: 'fonts/[name][ext]' } },
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
@@ -106,7 +108,7 @@ export default {
       ...inlinedEnv,
       'process.env.PUBLIC_PATH': JSON.stringify(publicPath),
     }),
-    !isDevelopment && new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' }),
+    !isDevelopment && new MiniCssExtractPlugin({ filename: 'css/[name].[contenthash].css' }),
     isDevelopment && new ReactRefreshWebpackPlugin(),
   ].filter(Boolean),
 };

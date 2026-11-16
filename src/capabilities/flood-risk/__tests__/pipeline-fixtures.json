@@ -1,0 +1,24 @@
+{
+  "storm": {
+    "cep": "08190-000",
+    "address": {
+      "cep": "08190000",
+      "street": "Rua X",
+      "neighbourhood": "Pantanal",
+      "city": "São Paulo",
+      "state": "SP"
+    },
+    "hourlyMm": { "hours": 72, "mmPerHour": 5 },
+    "elevationsM": [720, 735, 735, 735, 735],
+    "expected": { "rain24hMm": 120, "rain72hMm": 360, "relativeElevationM": -15 }
+  },
+  "badCep": "123",
+  "maskedCep": { "raw": "01310-100", "digits": "01310100" },
+  "rainSplit": {
+    "firstDayMmPerHour": 1,
+    "laterMmPerHour": 3,
+    "expected": { "rain24hMm": 24, "rain72hMm": 168 }
+  },
+  "ring": { "center": { "lat": -23.55, "lon": -46.63 }, "radiusKm": 0.5, "toleranceKm": 0.01 },
+  "relative": { "elevationsM": [10, 12, 14, 16, 18], "expected": -5, "lonely": [10] }
+}

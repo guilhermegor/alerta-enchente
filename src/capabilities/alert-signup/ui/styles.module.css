@@ -1,0 +1,36 @@
+.page {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 48rem;
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--space-2);
+  background: var(--color-surface);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.checkbox {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.fieldError {
+  min-height: 1.5em;
+  color: var(--color-error);
+  font-weight: var(--font-semibold);
+}
+
+.success {
+  color: var(--color-success);
+  font-weight: var(--font-semibold);
+}

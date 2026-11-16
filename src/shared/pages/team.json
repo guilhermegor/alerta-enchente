@@ -1,0 +1,5 @@
+[
+  { "name": "Nome do integrante 1", "rm": "RM000000", "role": "Desenvolvimento e pitch" },
+  { "name": "Nome do integrante 2", "rm": "RM000000", "role": "Design e acessibilidade" },
+  { "name": "Nome do integrante 3", "rm": "RM000000", "role": "Pesquisa e dados" }
+]
