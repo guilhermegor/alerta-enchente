@@ -53,7 +53,7 @@ export class OpenDataSource implements FloodDataSource {
       latitude: String(point.lat),
       longitude: String(point.lon),
       hourly: 'precipitation',
-      forecast_hours: String(FORECAST_HOURS),
+      forecast_hours: String(FORECAST_HOURS + 1),
       timezone: 'America/Sao_Paulo',
     });
     const data = await fetchJson<{ hourly?: { precipitation?: (number | null)[] } }>(
@@ -61,7 +61,7 @@ export class OpenDataSource implements FloodDataSource {
     );
     const hourly = data.hourly?.precipitation;
     if (!isCompleteSeries(hourly)) throw new Error('Previsão de chuva indisponível.');
-    return hourly;
+    return hourly.slice(1);
   }
 
   async elevationsM(points: readonly Coordinates[]): Promise<number[]> {
@@ -98,7 +98,7 @@ function toCoordinates(hit: NominatimHit): Coordinates {
 function isCompleteSeries(hourly: (number | null)[] | undefined): hourly is number[] {
   return (
     Array.isArray(hourly) &&
-    hourly.length >= FORECAST_HOURS &&
+    hourly.length > FORECAST_HOURS &&
     hourly.every((mm) => typeof mm === 'number')
   );
 }

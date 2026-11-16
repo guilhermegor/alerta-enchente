@@ -1,4 +1,4 @@
-import { type FocusEvent, type FormEvent, useRef, useState } from 'react';
+import { type FocusEvent, type FormEvent, useState } from 'react';
 
 import type { AlertSignup, SignupField } from '../../domain/entities';
 import { useAlertSignupContext } from '../../use-context';
@@ -16,13 +16,12 @@ interface FieldProps {
 export function SignupForm() {
   const { subscribe, saved, failure, cityByCep } = useAlertSignupContext();
   const [city, setCity] = useState('');
-  const latestCepRef = useRef('');
 
   async function fillCity(event: FocusEvent<HTMLInputElement>) {
-    const cep = event.target.value;
-    latestCepRef.current = cep;
+    const input = event.target;
+    const cep = input.value;
     const found = await cityByCep(cep);
-    if (found && latestCepRef.current === cep) setCity(found);
+    if (found && input.value === cep) setCity(found);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
