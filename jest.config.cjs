@@ -4,6 +4,7 @@ module.exports = {
   testMatch: ['<rootDir>/src/**/*.{test,spec}.{ts,tsx}'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
+    '\\.(svg|png|jpe?g|webp)$': '<rootDir>/jest.file-stub.cjs',
     '\\.module\\.css$': 'identity-obj-proxy',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^@/(.*)$': '<rootDir>/src/$1',

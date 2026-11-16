@@ -28,3 +28,5 @@ coverage/
 
 # js-copy delivery script output (npm run js-copy:build)
 /js-copy/
+/entrega/
+/entrega-alerta-enchente.zip

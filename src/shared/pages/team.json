@@ -1,5 +1,27 @@
 [
-  { "name": "Nome do integrante 1", "rm": "RM000000", "role": "Desenvolvimento e pitch" },
-  { "name": "Nome do integrante 2", "rm": "RM000000", "role": "Design e acessibilidade" },
-  { "name": "Nome do integrante 3", "rm": "RM000000", "role": "Pesquisa e dados" }
+  {
+    "name": "August Aguiar Gruber",
+    "rm": "RM568809",
+    "role": "Integrante"
+  },
+  {
+    "name": "Rogerio Gajewski Piatek dos Santos",
+    "rm": "RM573884",
+    "role": "Integrante"
+  },
+  {
+    "name": "Vladimir Leal Sposito de Oliveira",
+    "rm": "RM569159",
+    "role": "Integrante"
+  },
+  {
+    "name": "Guilherme Oliveira Rodrigues",
+    "rm": "RM569016",
+    "role": "Integrante"
+  },
+  {
+    "name": "Nicole Rodrigues da Silva Oliveira",
+    "rm": "RM572820",
+    "role": "Integrante"
+  }
 ]

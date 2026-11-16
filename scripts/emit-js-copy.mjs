@@ -22,11 +22,8 @@ function transpileFile(srcPath, destPath) {
     filename: srcPath,
     babelrc: false,
     configFile: false,
-    presets: [
-      ['@babel/preset-env', { targets: '> 0.25%, not dead' }],
-      ['@babel/preset-react', { runtime: 'automatic' }],
-      '@babel/preset-typescript',
-    ],
+    presets: ['@babel/preset-typescript'],
+    plugins: srcPath.endsWith('.tsx') ? ['@babel/plugin-syntax-jsx'] : [],
   });
   fs.mkdirSync(path.dirname(destPath), { recursive: true });
   fs.writeFileSync(destPath, code);
@@ -58,6 +55,7 @@ function walkAndTranspile(srcDir, destDir) {
 
 function writeWebpackConfig() {
   const config = `import HtmlWebpackPlugin from 'html-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -71,7 +69,10 @@ export default {
   entry: './src/index.jsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.[contenthash].js',
+    filename: 'js/bundle.[contenthash].js',
+    // 'auto' resolves assets relative to the page, so dist/index.html opens
+    // straight from disk (file://) as well as from any web subpath.
+    publicPath: 'auto',
     clean: true,
   },
   resolve: {
@@ -89,6 +90,9 @@ export default {
       {
         test: /\\.jsx?$/,
         exclude: /node_modules/,
+        // The project's "type": "module" makes webpack demand an extension on
+        // every import at the rule level; resolve.fullySpecified alone loses.
+        resolve: { fullySpecified: false },
         use: {
           loader: 'babel-loader',
           options: {
@@ -103,18 +107,24 @@ export default {
           },
         },
       },
+      // CSS ships as files under css/, never as injected <style> tags.
       {
         test: /\\.module\\.css$/,
-        use: ['style-loader', { loader: 'css-loader', options: { modules: true } }],
+        use: [MiniCssExtractPlugin.loader, { loader: 'css-loader', options: { modules: { namedExport: false, exportLocalsConvention: 'as-is' } } }],
       },
       {
         test: /\\.css$/,
         exclude: /\\.module\\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
+      { test: /\\.(svg|png|jpe?g|webp)$/, type: 'asset/resource', generator: { filename: 'img/[name].[contenthash][ext]' } },
+      { test: /\\.woff2?$/, type: 'asset/resource', generator: { filename: 'fonts/[name][ext]' } },
     ],
   },
-  plugins: [new HtmlWebpackPlugin({ template: './public/index.html', filename: 'index.html' })],
+  plugins: [
+    new HtmlWebpackPlugin({ template: './public/index.html', filename: 'index.html' }),
+    new MiniCssExtractPlugin({ filename: 'css/[name].[contenthash].css' }),
+  ],
 };
 `;
   fs.writeFileSync(path.join(OUT_DIR, 'webpack.config.js'), config);
