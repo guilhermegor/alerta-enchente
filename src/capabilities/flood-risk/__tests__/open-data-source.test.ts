@@ -61,11 +61,11 @@ function nominatimDownOpenMeteoReturns(places: unknown[]) {
   ) as unknown as typeof fetch;
 }
 
-function nominatimReturns(hits: unknown[]) {
+function nominatimReturns(hits: unknown[], places: unknown[] = []) {
   global.fetch = jest.fn((url: string) =>
     Promise.resolve({
       ok: true,
-      json: () => Promise.resolve(url.includes('nominatim') ? hits : { results: [] }),
+      json: () => Promise.resolve(url.includes('nominatim') ? hits : { results: places }),
     }),
   ) as unknown as typeof fetch;
 }
@@ -82,10 +82,10 @@ describe('OpenDataSource.locate city fallback', () => {
   });
 
   it('falls through to Open-Meteo when Nominatim has only other states', async () => {
-    nominatimReturns(cityFallback.nominatimOtherStateHits);
+    nominatimReturns(cityFallback.nominatimOtherStateHits, cityFallback.places);
 
-    await expect(new OpenDataSource().locate(cityFallback.address)).rejects.toThrow(
-      'Não foi possível localizar Bom Jesus/RS.',
+    await expect(new OpenDataSource().locate(cityFallback.address)).resolves.toEqual(
+      cityFallback.expected,
     );
   });
 

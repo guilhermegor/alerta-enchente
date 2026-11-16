@@ -102,6 +102,7 @@ async function searchNominatim(query: string, state: string): Promise<NominatimH
     limit: SEARCH_LIMIT,
     countrycodes: 'br',
     addressdetails: '1',
+    'accept-language': 'pt-BR',
   });
   const hits = await fetchJson<NominatimHit[]>(`${NOMINATIM_URL}?${params}`).catch(() => []);
   return hits.filter((hit) => hit.address?.state === STATE_NAMES[state]);
