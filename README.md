@@ -17,7 +17,7 @@
 **Alerta Enchente** é um protótipo CitizenTech (FIAP Global Solution 2026/2): a pessoa digita o CEP e vê o risco de enchente do endereço nos próximos dias — **baixo, moderado, alto ou muito alto** — com o motivo de cada fator: chuva prevista, relevo do entorno e histórico de alagamento do bairro.
 
 - **Site:** https://guilhermegor.github.io/alerta-enchente/
-- **Pitch (até 3 min):** _link do vídeo aqui_
+- **Pitch (até 3 min):** https://youtube.com/shorts/QyxdYTwA1UE
 - **Abrir sem instalar nada:** baixe a entrega e dê dois cliques em `index.html` (veja [Entrega em JavaScript puro](#entrega-em-javascript-puro)).
 
 O problema: 8,27 milhões de brasileiros vivem em áreas de risco de enchente e deslizamento (IBGE, 2018), e o alerta costuma chegar por cidade, não pela rua. A proposta conversa com os ODS 11 (meta 11.5) e 13 (meta 13.1).
@@ -227,6 +227,8 @@ This project is licensed under MIT; see [LICENSE](LICENSE).
 | Vladimir Leal Sposito de Oliveira  | RM569159 |
 | Guilherme Oliveira Rodrigues       | RM569016 |
 | Nicole Rodrigues da Silva Oliveira | RM572820 |
+
+Pitch (até 3 min): https://youtube.com/shorts/QyxdYTwA1UE
 
 Os mesmos dados aparecem na página Equipe (`src/shared/pages/team.json`).
 
