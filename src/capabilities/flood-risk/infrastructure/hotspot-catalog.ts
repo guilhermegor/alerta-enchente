@@ -14,7 +14,8 @@ const HISTORY_BY_LABEL: Record<string, FloodHistory | undefined> = {
 
 function toHotspot(raw: (typeof rawHotspots)[number]): Hotspot {
   const history = HISTORY_BY_LABEL[raw.history];
-  if (!history) throw new Error(`hotspots.json: unknown history "${raw.history}" for ${raw.neighbourhood}`);
+  if (!history)
+    throw new Error(`hotspots.json: unknown history "${raw.history}" for ${raw.neighbourhood}`);
   return { ...raw, history };
 }
 

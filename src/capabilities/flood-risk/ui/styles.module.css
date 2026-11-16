@@ -1,0 +1,81 @@
+.page {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.card,
+.result,
+.form {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--space-2);
+  background: var(--color-surface);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.row input {
+  flex: 1 1 16rem;
+}
+
+.fieldError {
+  min-height: 1.5em;
+  color: var(--color-error);
+  font-weight: var(--font-semibold);
+}
+
+.badge {
+  justify-self: start;
+  padding: var(--space-2) var(--space-4);
+  border-radius: 999px;
+  font-size: var(--text-lg);
+  color: var(--neutral-900);
+}
+
+.levelLow {
+  background: var(--green-400);
+}
+
+.levelModerate {
+  background: var(--yellow-400);
+}
+
+.levelHigh {
+  background: #fb923c;
+}
+
+.levelVeryHigh {
+  background: #f87171;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table caption {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+  text-align: left;
+}
+
+.table th,
+.table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+ul {
+  padding-left: var(--space-5);
+}

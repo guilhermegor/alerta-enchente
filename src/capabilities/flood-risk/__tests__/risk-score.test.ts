@@ -1,4 +1,10 @@
-import { haversineKm, nearestHotspot, rainBand, riskScore, terrainBand } from '../application/risk-score';
+import {
+  haversineKm,
+  nearestHotspot,
+  rainBand,
+  riskScore,
+  terrainBand,
+} from '../application/risk-score';
 import type { Hotspot } from '../domain/entities';
 import { RiskLevel } from '../domain/enums';
 import { HOTSPOTS } from '../infrastructure/hotspot-catalog';
@@ -46,7 +52,12 @@ describe('terrainBand', () => {
 });
 
 function scenarioNear(
-  scenario: { rain24hMm: number; rain72hMm: number; relativeElevationM: number; hotspotDistanceKm: number },
+  scenario: {
+    rain24hMm: number;
+    rain72hMm: number;
+    relativeElevationM: number;
+    hotspotDistanceKm: number;
+  },
   hotspot: Hotspot,
 ) {
   const { hotspotDistanceKm, ...rest } = scenario;

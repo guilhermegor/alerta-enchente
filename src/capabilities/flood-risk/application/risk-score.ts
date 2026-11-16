@@ -1,4 +1,10 @@
-import type { Coordinates, Hotspot, NearbyHotspot, RiskAssessment, RiskFactors } from '../domain/entities';
+import type {
+  Coordinates,
+  Hotspot,
+  NearbyHotspot,
+  RiskAssessment,
+  RiskFactors,
+} from '../domain/entities';
 import { FloodHistory, RiskLevel } from '../domain/enums';
 
 const LEVELS_BY_INDEX: readonly RiskLevel[] = [
@@ -99,6 +105,7 @@ export function haversineKm(a: Coordinates, b: Coordinates): number {
   const dLat = (b.lat - a.lat) * rad;
   const dLon = (b.lon - a.lon) * rad;
   const h =
-    Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2;
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2;
   return 2 * EARTH_RADIUS_KM * Math.asin(Math.sqrt(h));
 }

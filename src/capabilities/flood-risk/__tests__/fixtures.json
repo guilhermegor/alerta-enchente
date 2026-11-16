@@ -9,12 +9,47 @@
   "distanceToleranceKm": 10,
   "hotspotRadiusKm": 2,
   "minimumCatalogSize": 10,
-  "rainBands": [[0, 0], [29.9, 0], [30, 1], [50, 1], [50.1, 2], [100, 2], [100.1, 3]],
-  "terrainBands": [[5, 0], [0, 0], [-3, 1], [-9, 1], [-10, 2]],
+  "rainBands": [
+    [0, 0],
+    [29.9, 0],
+    [30, 1],
+    [50, 1],
+    [50.1, 2],
+    [100, 2],
+    [100.1, 3]
+  ],
+  "terrainBands": [
+    [5, 0],
+    [0, 0],
+    [-3, 1],
+    [-9, 1],
+    [-10, 2]
+  ],
   "scenarios": {
-    "dryHighGround": { "rain24hMm": 0, "rain72hMm": 0, "relativeElevationM": 5, "expectedReasons": 1 },
-    "stormInValley": { "rain24hMm": 120, "rain72hMm": 200, "relativeElevationM": -15, "hotspotDistanceKm": 0.3, "expectedReasons": 3 },
-    "mediumFactors": { "rain24hMm": 35, "rain72hMm": 60, "relativeElevationM": -5, "hotspotDistanceKm": 1 },
-    "dryNearPantanal": { "rain24hMm": 0, "rain72hMm": 0, "relativeElevationM": 0, "hotspotDistanceKm": 0.5 }
+    "dryHighGround": {
+      "rain24hMm": 0,
+      "rain72hMm": 0,
+      "relativeElevationM": 5,
+      "expectedReasons": 1
+    },
+    "stormInValley": {
+      "rain24hMm": 120,
+      "rain72hMm": 200,
+      "relativeElevationM": -15,
+      "hotspotDistanceKm": 0.3,
+      "expectedReasons": 3
+    },
+    "mediumFactors": {
+      "rain24hMm": 35,
+      "rain72hMm": 60,
+      "relativeElevationM": -5,
+      "hotspotDistanceKm": 1
+    },
+    "dryNearPantanal": {
+      "rain24hMm": 0,
+      "rain72hMm": 0,
+      "relativeElevationM": 0,
+      "hotspotDistanceKm": 0.5
+    }
   }
 }
