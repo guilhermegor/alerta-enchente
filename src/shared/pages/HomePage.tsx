@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 
-import illustration from '@/shared/assets/rain-city.svg';
+import photo from '@/shared/assets/rain-street.jpg';
 
 import styles from './pages.module.css';
 
@@ -19,10 +19,10 @@ export function HomePage() {
           </Link>
         </div>
         <img
-          src={illustration}
-          alt="Ilustração de chuva forte sobre uma rua alagada"
-          width={320}
-          height={160}
+          src={photo}
+          alt="Pessoa de guarda-chuva atravessando uma rua molhada sob chuva forte"
+          width={600}
+          height={750}
         />
       </section>
       <section aria-labelledby="quem-titulo">

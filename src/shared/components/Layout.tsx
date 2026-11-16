@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react';
 import { NavLink, Outlet } from 'react-router';
 
-import logo from '@/shared/assets/logo.svg';
+import logo from '@/shared/assets/logo.png';
 
 import { AccessibilityBar } from './AccessibilityBar';
 import styles from './layout.module.css';
