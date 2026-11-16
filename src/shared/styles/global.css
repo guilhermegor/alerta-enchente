@@ -22,9 +22,11 @@ body {
 html[data-font-step='1'] {
   font-size: 70%;
 }
+
 html[data-font-step='2'] {
   font-size: 78%;
 }
+
 html[data-font-step='3'] {
   font-size: 86%;
 }
@@ -39,20 +41,19 @@ html[data-contrast='high'] {
   --color-error: #ff6b6b;
 }
 
-html[data-contrast='high'] a {
-  color: #ff0;
-}
-
 h1 {
   font-size: var(--text-3xl);
   line-height: var(--leading-tight);
 }
+
 h2 {
   font-size: var(--text-2xl);
 }
+
 h3 {
   font-size: var(--text-xl);
 }
+
 p,
 li {
   max-width: 72ch;
@@ -73,10 +74,18 @@ button {
   color: var(--color-text-default);
 }
 
+/* Long <select> options and default input sizes must never widen the page. */
+input:not([type='checkbox']),
+select {
+  width: 100%;
+  max-width: 100%;
+}
+
 input[type='checkbox'] {
   width: 2rem;
   height: 2rem;
 }
+
 input[type='range'] {
   padding: 0;
 }
