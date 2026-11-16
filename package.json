@@ -27,9 +27,10 @@
     "context:export": "bash bin/export_repo_content.sh",
     "repo:rules": "bash bin/enable_repo_rules.sh",
     "repo:rules:verify": "bash bin/enable_repo_rules.sh verify",
-    "js-copy:build": "node scripts/emit-js-copy.mjs",
+    "js-copy:build": "node scripts/emit-js-copy.mjs && prettier --log-level warn --ignore-path .prettierignore --write js-copy/src",
     "js-copy:verify": "node scripts/verify-js-copy.mjs",
-    "js-copy": "npm run js-copy:build && npm run js-copy:verify"
+    "js-copy": "npm run js-copy:build && npm run js-copy:verify",
+    "delivery": "npm run js-copy && cross-env NODE_ENV=production webpack --config js-copy/webpack.config.js --mode production"
   },
   "keywords": [],
   "author": "",
