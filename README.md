@@ -14,30 +14,34 @@
 <!-- slug: overview -->
 ## Overview
 
-Inferência de risco de enchente por endereço para o cidadão
+**Alerta Enchente** é um protótipo CitizenTech (FIAP Global Solution 2026/2): a pessoa digita o CEP e vê o risco de enchente do endereço nos próximos dias — **baixo, moderado, alto ou muito alto** — com o motivo de cada fator: chuva prevista, relevo do entorno e histórico de alagamento do bairro.
+
+- **Site:** https://guilhermegor.github.io/alerta-enchente/
+- **Pitch (até 3 min):** _link do vídeo aqui_
+- **Abrir sem instalar nada:** baixe a entrega e dê dois cliques em `index.html` (veja [Entrega em JavaScript puro](#plain-javascript-delivery-copy)).
+
+O problema: 8,27 milhões de brasileiros vivem em áreas de risco de enchente e deslizamento (IBGE, 2018), e o alerta costuma chegar por cidade, não pela rua. A proposta conversa com os ODS 11 (meta 11.5) e 13 (meta 13.1).
 
 ## Key Features
 
 ### Pages & Routes
-- [Page placeholder 1](#)
-- [Page placeholder 2](#)
-- [Page placeholder 3](#)
+- **Início** (`#/`): para quem é, o problema com dado e fonte, e como funciona.
+- **Consulta** (`#/consulta`): risco por CEP, com o porquê, e um simulador de cenários que funciona offline.
+- **Impacto** (`#/impacto`): ODS 11.5 e 13.1 e a tabela dos 12 bairros com histórico de alagamento.
+- **Alertas** (`#/alertas`): cadastro validado em JS, com mensagens na própria página e cidade preenchida pelo CEP.
+- **Equipe** (`#/equipe`): integrantes e RMs.
 
 ### Capabilities (vertical slices)
-- [Capability placeholder 1](#)
-- [Capability placeholder 2](#)
-- [Capability placeholder 3](#)
+- `flood-risk`: CEP → ViaCEP → Nominatim → Open-Meteo (chuva e relevo) → `riskScore()`, em que **o pior fator manda**. As regras e os limites do INMET estão em [docs/como-funciona.md](docs/como-funciona.md).
+- `alert-signup`: validação pura (`validateSignup()`) e cadastro guardado no navegador (`localStorage`).
 
 ### State Management
 - Variant: **React Context** — see `src/capabilities/<feature>/context.tsx`
 
 ### UI & Accessibility
-- [a11y / i18n / theming placeholder](#)
-- [Design-system placeholder](#)
-
-### Performance
-- [Code-splitting / lazy-loading placeholder](#)
-- [Bundle-analysis placeholder](#)
+- HTML semântico (`header`, `nav`, `main`, `section`, `footer`), link "pular para o conteúdo", `label` em todos os campos, foco visível e navegação completa por teclado.
+- **Diferencial:** botões de alto contraste e de tamanho de fonte (A-/A+), lembrados entre visitas.
+- Layout responsivo com grid, flexbox e media queries, sem rolagem horizontal a partir de 320 px.
 
 ### Testing
 - Unit / component: **Jest + React Testing Library**
@@ -66,8 +70,9 @@ npm install
 ### Usage
 
 ```bash
-npm run dev    # webpack-dev-server with HMR at http://localhost:3000
-npm run build  # production build, emits to dist/
+npm start           # servidor de desenvolvimento em http://localhost:3000
+npm run build       # build de produção em dist/ (css/, js/, img/, fonts/)
+npm run delivery    # cópia em JavaScript puro + build que abre por file://
 ```
 
 <!-- slug: project-structure -->
@@ -157,45 +162,44 @@ gh api -X POST repos/guilhermegor/alerta-enchente/pages \
 
 …or enable it manually via `Settings → Pages → Source: gh-pages → /`.
 
-See `CLAUDE.md → Deployment` for the full rationale (token scopes, router
-basename, custom domains).
-
-## Docker (optional)
-
-If you scaffolded with the Docker option, the project root has a `Dockerfile`,
-`nginx.conf`, and `.dockerignore`. The build is **multi-stage** (Node build →
-nginx serve), so the final image carries only the static `dist/` on nginx
-(~30 MB — no Node, no `node_modules`, no source).
-
-```bash
-# Build — the BuildKit secret passes .env at build time without baking it into a layer
-docker build --secret id=env,src=.env -t alerta-enchente .
-
-# Run — nginx serves the SPA on port 80
-docker run --rm -p 8080:80 alerta-enchente   # → http://localhost:8080
-```
-
-To pin the build to the Node version in `.nvmrc`, add
-`--build-arg NODE_VERSION="$(cat .nvmrc)"`. See `CLAUDE.md → Docker` for details.
+O site publicado fica em https://guilhermegor.github.io/alerta-enchente/. Como as rotas usam `#`, o `404.html` não é necessário, mas não atrapalha.
 
 ## Plain-JavaScript delivery copy (optional)
 
-If you scaffolded with the JS-copy option, `scripts/emit-js-copy.mjs` and
-`scripts/verify-js-copy.mjs` are present. Use this when a delivery must not
-contain TypeScript at all — a course submission, a client handoff, a
-consumer with no TS toolchain.
+A entrega da FIAP não pode ter TypeScript e precisa abrir com dois cliques no `index.html`. `npm run delivery` gera as duas coisas:
 
 ```bash
-npm run js-copy:build   # strips types with @babel/preset-typescript → js-copy/
-npm run js-copy:verify  # fails loudly if any .ts(x)/tsconfig, or a mention
-                         # of TypeScript in a generated .md/.txt/.html, survived
-npm run js-copy          # both, in order
+npm run delivery
+# js-copy/src/        código-fonte em JavaScript + JSX (só os tipos são removidos)
+# js-copy/dist/       site pronto: index.html + css/ + js/ + img/ + fonts/
 ```
 
-`js-copy/` is a build artifact (git-ignored, excluded from lint) with its own
-generated `webpack.config.js` — build it with `npx webpack --mode production`
-from inside `js-copy/`, resolving `webpack`/`babel-loader` from the parent
-project's `node_modules`.
+`js-copy:verify` falha se sobrar qualquer arquivo `.ts`/`.tsx` ou menção a TypeScript. O build usa `HashRouter` e caminhos relativos, por isso abre direto do disco (`file://`). As consultas às APIs públicas precisam de internet; sem ela, o simulador da página Consulta continua funcionando.
+
+Para montar o `.zip` de entrega:
+
+```bash
+npm run delivery
+cd js-copy && zip -r ../entrega-alerta-enchente.zip dist src public webpack.config.js && cd ..
+```
+
+## Equipe e pitch
+
+| Nome | RM |
+|---|---|
+| _Integrante 1_ | _RM_ |
+| _Integrante 2_ | _RM_ |
+| _Integrante 3_ | _RM_ |
+
+Os mesmos dados aparecem na página Equipe (`src/shared/pages/team.json`).
+
+## Uso de IA generativa
+
+Usamos um assistente de IA (Claude) para:
+- gerar o projeto a partir do modelo BlueprintX `react-spa-webpack`;
+- escrever o código das camadas, os testes e esta documentação.
+
+A equipe definiu o problema, escolheu a regra "o pior fator manda" e os limites do INMET, revisou cada mudança e testou o site no navegador. Os 12 bairros de `hotspots.json` são ilustrativos e estão marcados como tal na página Impacto.
 
 <!-- slug: contributing -->
 ## Contributing
@@ -211,7 +215,7 @@ This project is licensed under MIT; see [LICENSE](LICENSE).
 <!-- slug: authors -->
 ## Authors
 
-- guilhermegor — [GitHub](https://github.com/guilhermegor) | [LinkedIn](https://www.linkedin.com/in/your-linkedin-handle)
+- guilhermegor — [GitHub](https://github.com/guilhermegor) | [LinkedIn](https://www.linkedin.com/in/guilhermegor)
 
 ## Acknowledgments
 
